@@ -1,113 +1,106 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  Boxes,
+  CloudLightning,
+  Database,
+} from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 import { D1StatusCard } from "./_components/d1-status-card";
 import { KvStatusCard } from "./_components/kv-status-card";
 import { R2StatusCard } from "./_components/r2-status-card";
 
+const highlights = [
+  {
+    title: "Edge-first runtime",
+    description: "Serve Next.js App Router routes with near-zero cold starts on Cloudflare Workers.",
+    icon: CloudLightning,
+  },
+  {
+    title: "Full data stack",
+    description: "Ship with production-ready access to D1, R2, and KV from a single codebase.",
+    icon: Database,
+  },
+  {
+    title: "Opinionated DX",
+    description: "Prewired linting, type-safety, and shadcn/ui primitives for fast iteration.",
+    icon: Boxes,
+  },
+];
+
 export default function Home() {
-
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="container flex flex-col gap-16 py-16">
+      <section className="flex flex-col gap-8 text-center sm:text-left">
+        <div className="flex justify-center sm:justify-start">
+          <Badge className="gap-2 px-4 py-1 text-sm" variant="secondary">
+            Cloudflare Workers • Next.js 15
+          </Badge>
         </div>
 
-        <div className="flex w-full flex-col gap-4">
+        <div className="space-y-4">
+          <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Cloudflare + Next.js starter, upgraded with shadcn/ui
+          </h1>
+          <p className="mx-auto max-w-3xl text-base text-muted-foreground sm:text-lg">
+            Deploy a modern, edge-native application with polished UI primitives, instant data checks,
+            and a toolkit tuned for the Cloudflare stack. Start iterating in minutes with production-ready defaults.
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-start">
+          <Button asChild size="lg">
+            <Link href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noreferrer">
+              Deploy to Cloudflare
+              <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden />
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/" target="_blank" rel="noreferrer">
+              Deployment guide
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {highlights.map((feature) => (
+          <Card key={feature.title} className="h-full">
+            <CardHeader className="flex-row items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <feature.icon className="h-5 w-5" aria-hidden />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardDescription>{feature.description}</CardDescription>
+              </div>
+            </CardHeader>
+          </Card>
+        ))}
+      </section>
+
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold tracking-tight">Verify your Cloudflare bindings</h2>
+          <p className="text-muted-foreground">
+            Run the built-in health checks to confirm each service is wired up to your environment.
+          </p>
+        </div>
+        <div className="grid gap-6 xl:grid-cols-2">
           <D1StatusCard />
           <R2StatusCard />
           <KvStatusCard />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+    </main>
   );
 }

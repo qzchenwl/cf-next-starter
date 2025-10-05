@@ -2,6 +2,17 @@
 
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 type TimestampResponse = {
   ok: boolean;
   currentTimestamp: string | null;
@@ -42,31 +53,63 @@ export function D1StatusCard() {
   };
 
   let statusMessage = "Click the button to verify your D1 connection.";
+  let badgeLabel = "Idle";
+  let badgeVariant: "default" | "muted" | "destructive" = "muted";
 
   if (isLoading) {
     statusMessage = "Checking database connection...";
+    badgeLabel = "Checking";
+    badgeVariant = "muted";
   } else if (timestamp) {
     statusMessage = `Connected! The database responded with ${timestamp} (UTC).`;
+    badgeLabel = "Connected";
+    badgeVariant = "default";
   } else if (error) {
     statusMessage = error;
+    badgeLabel = "Error";
+    badgeVariant = "destructive";
   }
 
   return (
-    <section className="w-full max-w-xl rounded-lg border border-black/[.08] dark:border-white/[.145] bg-white/60 dark:bg-black/40 p-4 shadow-sm backdrop-blur">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-base font-semibold">Cloudflare D1 connection check</h2>
-          <p className="mt-1 text-sm text-black/80 dark:text-white/80">{statusMessage}</p>
+    <Card className="w-full">
+      <CardHeader className="gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <CardTitle>Cloudflare D1</CardTitle>
+            <CardDescription>Relational storage, powered by SQLite.</CardDescription>
+          </div>
+          <Badge variant={badgeVariant}>{badgeLabel}</Badge>
         </div>
-        <button
-          type="button"
-          onClick={handleCheckConnection}
-          disabled={isLoading}
-          className="h-10 shrink-0 rounded-full border border-solid border-black/[.08] bg-white/70 px-4 text-sm font-medium transition-colors hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-70 dark:border-white/[.145] dark:bg-black/40 dark:hover:bg-black/60"
-        >
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">{statusMessage}</p>
+        {timestamp ? (
+          <div className="rounded-lg border bg-muted/40 px-4 py-3 text-sm">
+            <p className="font-mono text-xs uppercase text-muted-foreground">
+              Last response (UTC)
+            </p>
+            <p className="mt-1 font-medium text-foreground">{timestamp}</p>
+          </div>
+        ) : null}
+      </CardContent>
+      <CardFooter className="flex flex-wrap items-center justify-between gap-3">
+        <Button onClick={handleCheckConnection} disabled={isLoading}>
           {isLoading ? "Checking..." : "Check now"}
-        </button>
-      </div>
-    </section>
+        </Button>
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+        >
+          <a
+            href="https://developers.cloudflare.com/d1/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View docs
+          </a>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

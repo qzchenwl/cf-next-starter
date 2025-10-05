@@ -1,6 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type R2Object = {
   key: string;
@@ -53,56 +64,98 @@ export function R2StatusCard() {
     }
   };
 
-  let statusMessage = "Click the button to list a few objects from your R2 bucket.";
-
-  if (isLoading) {
-    statusMessage = "Querying R2 bucket...";
-  } else if (objects) {
-    if (objects.length === 0) {
-      statusMessage = "Connected! The bucket is currently empty.";
-    } else {
-      const countLabel = objects.length === 1 ? "object" : "objects";
-      statusMessage = `Connected! Showing ${objects.length} ${countLabel} from the bucket.`;
+  const status = useMemo(() => {
+    if (isLoading) {
+      return {
+        message: "Querying R2 bucket...",
+        badge: "Checking",
+        variant: "muted" as const,
+      };
     }
-  } else if (error) {
-    statusMessage = error;
-  }
+
+    if (objects) {
+      if (objects.length === 0) {
+        return {
+          message: "Connected! The bucket is currently empty.",
+          badge: "Connected",
+          variant: "default" as const,
+        };
+      }
+
+      const countLabel = objects.length === 1 ? "object" : "objects";
+      return {
+        message: `Connected! Showing ${objects.length} ${countLabel} from the bucket.`,
+        badge: "Connected",
+        variant: "default" as const,
+      };
+    }
+
+    if (error) {
+      return {
+        message: error,
+        badge: "Error",
+        variant: "destructive" as const,
+      };
+    }
+
+    return {
+      message: "Click the button to list a few objects from your R2 bucket.",
+      badge: "Idle",
+      variant: "muted" as const,
+    };
+  }, [error, isLoading, objects]);
 
   return (
-    <section className="w-full max-w-xl rounded-lg border border-black/[.08] dark:border-white/[.145] bg-white/60 dark:bg-black/40 p-4 shadow-sm backdrop-blur">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="w-full">
-          <h2 className="text-base font-semibold">Cloudflare R2 connection check</h2>
-          <p className="mt-1 text-sm text-black/80 dark:text-white/80">{statusMessage}</p>
-
-          {objects && objects.length > 0 ? (
-            <ul className="mt-3 space-y-2 text-sm text-black/80 dark:text-white/80">
+    <Card className="w-full">
+      <CardHeader className="gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <CardTitle>Cloudflare R2</CardTitle>
+            <CardDescription>Durable object storage with S3 compatibility.</CardDescription>
+          </div>
+          <Badge variant={status.variant}>{status.badge}</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">{status.message}</p>
+        {objects && objects.length > 0 ? (
+          <div className="space-y-2">
+            <ul className="space-y-2">
               {objects.map((object) => (
-                <li key={object.key} className="rounded-md bg-black/[.04] p-2 dark:bg-white/[.06]">
-                  <p className="font-medium break-all">{object.key}</p>
-                  <p className="text-xs text-black/70 dark:text-white/70">
-                    {object.size} bytes
-                    {object.uploaded ? ` • uploaded ${new Date(object.uploaded).toUTCString()}` : null}
+                <li
+                  key={object.key}
+                  className="rounded-lg border bg-muted/40 px-4 py-3 text-sm"
+                >
+                  <p className="font-medium text-foreground break-all">{object.key}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {object.size.toLocaleString()} bytes
+                    {object.uploaded
+                      ? ` • uploaded ${new Date(object.uploaded).toUTCString()}`
+                      : ""}
                   </p>
                 </li>
               ))}
-              {isTruncated ? (
-                <li className="text-xs text-black/70 dark:text-white/70">
-                  Showing the first {objects.length} items. Add a prefix or pagination to fetch more.
-                </li>
-              ) : null}
             </ul>
-          ) : null}
-        </div>
-        <button
-          type="button"
-          onClick={handleCheckBucket}
-          disabled={isLoading}
-          className="h-10 shrink-0 rounded-full border border-solid border-black/[.08] bg-white/70 px-4 text-sm font-medium transition-colors hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-70 dark:border-white/[.145] dark:bg-black/40 dark:hover:bg-black/60"
-        >
+            {isTruncated ? (
+              <Badge variant="outline" className="w-fit">Truncated list</Badge>
+            ) : null}
+          </div>
+        ) : null}
+      </CardContent>
+      <CardFooter className="flex flex-wrap items-center justify-between gap-3">
+        <Button onClick={handleCheckBucket} disabled={isLoading}>
           {isLoading ? "Checking..." : "List objects"}
-        </button>
-      </div>
-    </section>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <a
+            href="https://developers.cloudflare.com/r2/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View docs
+          </a>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
