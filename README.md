@@ -92,3 +92,5 @@ Storybook is available for rapid UI iteration using the React + Vite framework p
 ```bash
 npm run storybook
 ```
+
+The `UI/Button/Gallery` story showcases every variant and size in one canvas, which is helpful when reviewing states or capturing comparison screenshots.

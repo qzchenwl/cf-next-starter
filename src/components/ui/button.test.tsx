@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { vi } from "vitest";
 
 import { Button } from "./button";
 
@@ -25,5 +26,22 @@ describe("Button", () => {
     await userEvent.click(button);
 
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("can be disabled to block user interaction", async () => {
+    const onClick = vi.fn();
+
+    render(
+      <Button onClick={onClick} disabled>
+        Disabled
+      </Button>,
+    );
+
+    const button = screen.getByRole("button", { name: /disabled/i });
+    expect(button).toBeDisabled();
+
+    await userEvent.click(button);
+
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
