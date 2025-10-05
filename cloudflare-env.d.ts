@@ -5,9 +5,14 @@ declare namespace Cloudflare {
 	interface Env {
 		NEXTJS_ENV: string;
 		ASSETS: Fetcher;
+		cf_next_starter_d1: D1Database;
 	}
 }
 interface CloudflareEnv extends Cloudflare.Env {}
+
+declare module "cloudflare:env" {
+	export const env: CloudflareEnv;
+}
 
 // Begin runtime types
 /*! *****************************************************************************
