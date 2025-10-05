@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { D1StatusCard } from "./_components/d1-status-card";
+import { KvStatusCard } from "./_components/kv-status-card";
 import { R2StatusCard } from "./_components/r2-status-card";
 
 export default function Home() {
@@ -57,6 +58,7 @@ export default function Home() {
         <div className="flex w-full flex-col gap-4">
           <D1StatusCard />
           <R2StatusCard />
+          <KvStatusCard />
         </div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
