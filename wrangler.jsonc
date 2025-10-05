@@ -12,6 +12,7 @@
     "global_fetch_strictly_public"
   ],
   "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "binding": "ASSETS",
     "directory": ".open-next/assets"
