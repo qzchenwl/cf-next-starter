@@ -51,6 +51,17 @@ Object storage is available out of the box through the `cf-next-starter-r2` buck
 
 Re-run `npm run cf-typegen` after changing the binding name or adding additional buckets to keep the TypeScript definitions in sync.
 
+## Cloudflare KV integration
+
+The starter now includes a `cf-next-starter-kv` namespace for key-value storage:
+
+- `wrangler.jsonc` declares the `KV` binding and links it to the provisioned namespace (ID `418b43fc589842d088cc79d412a12222`).
+- `cloudflare-env.d.ts` exposes the binding so you can access the namespace with full type safety.
+- `src/app/api/kv/route.ts` fetches a short list of keys to validate connectivity.
+- The home page features a KV status card that lets you verify the namespace from the browser.
+
+Remember to run `npm run cf-typegen` after updating the binding name or adding additional namespaces.
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs) – learn about features and APIs.

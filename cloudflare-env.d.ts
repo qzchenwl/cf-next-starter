@@ -6,6 +6,7 @@ declare namespace Cloudflare {
     D1: D1Database;
     ASSETS: Fetcher;
     R2: R2Bucket;
+    KV: KVNamespace;
   }
 }
 interface CloudflareEnv extends Cloudflare.Env {}
