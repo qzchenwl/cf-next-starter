@@ -1,8 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { drizzle } from "drizzle-orm/d1";
 import { sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
-
-import { createDb } from "@/db/client";
 
 type TimestampRow = {
   currentTimestamp: string;
@@ -11,7 +10,7 @@ type TimestampRow = {
 export async function GET() {
   try {
     const { env } = await getCloudflareContext({ async: true });
-    const db = createDb(env.D1);
+    const db = drizzle(env.D1);
     const row = await db.get<TimestampRow>(
       sql`SELECT datetime('now') as currentTimestamp`,
     );
