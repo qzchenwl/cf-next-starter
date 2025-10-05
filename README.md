@@ -78,3 +78,17 @@ npm run deploy
 ```
 
 Refer to the [Cloudflare deployment guide](https://developers.cloudflare.com/workers/wrangler/deploy-projects/) for additional details.
+
+## Testing & UI Previews
+
+Run the Vitest suite (configured with Testing Library) to validate interactive components in isolation:
+
+```bash
+npm run test
+```
+
+Storybook is available for rapid UI iteration using the React + Vite framework preset. Start it locally and visit [http://localhost:6006](http://localhost:6006) to browse component stories:
+
+```bash
+npm run storybook
+```
