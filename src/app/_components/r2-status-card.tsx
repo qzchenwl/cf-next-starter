@@ -1,6 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { Boxes } from "lucide-react";
+
+import { Badge, type BadgeProps } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type R2Object = {
   key: string;
@@ -54,10 +66,17 @@ export function R2StatusCard() {
   };
 
   let statusMessage = "Click the button to list a few objects from your R2 bucket.";
+  let statusLabel: string = "Idle";
+  let statusVariant: BadgeProps["variant"] = "outline";
 
   if (isLoading) {
+    statusLabel = "Checking";
+    statusVariant = "secondary";
     statusMessage = "Querying R2 bucket...";
   } else if (objects) {
+    statusLabel = "Connected";
+    statusVariant = "default";
+
     if (objects.length === 0) {
       statusMessage = "Connected! The bucket is currently empty.";
     } else {
@@ -65,44 +84,56 @@ export function R2StatusCard() {
       statusMessage = `Connected! Showing ${objects.length} ${countLabel} from the bucket.`;
     }
   } else if (error) {
+    statusLabel = "Error";
+    statusVariant = "destructive";
     statusMessage = error;
   }
 
   return (
-    <section className="w-full max-w-xl rounded-lg border border-black/[.08] dark:border-white/[.145] bg-white/60 dark:bg-black/40 p-4 shadow-sm backdrop-blur">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="w-full">
-          <h2 className="text-base font-semibold">Cloudflare R2 connection check</h2>
-          <p className="mt-1 text-sm text-black/80 dark:text-white/80">{statusMessage}</p>
-
-          {objects && objects.length > 0 ? (
-            <ul className="mt-3 space-y-2 text-sm text-black/80 dark:text-white/80">
-              {objects.map((object) => (
-                <li key={object.key} className="rounded-md bg-black/[.04] p-2 dark:bg-white/[.06]">
-                  <p className="font-medium break-all">{object.key}</p>
-                  <p className="text-xs text-black/70 dark:text-white/70">
-                    {object.size} bytes
-                    {object.uploaded ? ` • uploaded ${new Date(object.uploaded).toUTCString()}` : null}
-                  </p>
-                </li>
-              ))}
-              {isTruncated ? (
-                <li className="text-xs text-black/70 dark:text-white/70">
-                  Showing the first {objects.length} items. Add a prefix or pagination to fetch more.
-                </li>
-              ) : null}
-            </ul>
-          ) : null}
+    <Card className="h-full">
+      <CardHeader className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground">
+              <Boxes className="h-5 w-5" />
+            </span>
+            <CardTitle>Cloudflare R2</CardTitle>
+          </div>
+          <Badge variant={statusVariant}>{statusLabel}</Badge>
         </div>
-        <button
-          type="button"
-          onClick={handleCheckBucket}
-          disabled={isLoading}
-          className="h-10 shrink-0 rounded-full border border-solid border-black/[.08] bg-white/70 px-4 text-sm font-medium transition-colors hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-70 dark:border-white/[.145] dark:bg-black/40 dark:hover:bg-black/60"
-        >
+        <CardDescription>{statusMessage}</CardDescription>
+      </CardHeader>
+      {objects && objects.length > 0 ? (
+        <CardContent className="space-y-3">
+          <ul className="grid gap-3 text-sm">
+            {objects.map((object) => (
+              <li
+                key={object.key}
+                className="rounded-lg border border-border/80 bg-muted/50 p-3"
+              >
+                <p className="font-medium text-foreground">{object.key}</p>
+                <p className="text-xs text-muted-foreground">
+                  {object.size} bytes
+                  {object.uploaded
+                    ? ` • uploaded ${new Date(object.uploaded).toUTCString()}`
+                    : null}
+                </p>
+              </li>
+            ))}
+          </ul>
+          {isTruncated ? (
+            <p className="text-xs text-muted-foreground">
+              Showing the first {objects.length} items. Add a prefix or pagination
+              to fetch more.
+            </p>
+          ) : null}
+        </CardContent>
+      ) : null}
+      <CardFooter className="justify-end border-t border-border pt-6">
+        <Button onClick={handleCheckBucket} disabled={isLoading}>
           {isLoading ? "Checking..." : "List objects"}
-        </button>
-      </div>
-    </section>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

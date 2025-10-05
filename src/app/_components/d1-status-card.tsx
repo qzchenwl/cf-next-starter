@@ -1,6 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { Database } from "lucide-react";
+
+import { Badge, type BadgeProps } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type TimestampResponse = {
   ok: boolean;
@@ -42,31 +54,49 @@ export function D1StatusCard() {
   };
 
   let statusMessage = "Click the button to verify your D1 connection.";
+  let statusLabel: string = "Idle";
+  let statusVariant: BadgeProps["variant"] = "outline";
 
   if (isLoading) {
+    statusLabel = "Checking";
+    statusVariant = "secondary";
     statusMessage = "Checking database connection...";
   } else if (timestamp) {
-    statusMessage = `Connected! The database responded with ${timestamp} (UTC).`;
+    statusLabel = "Connected";
+    statusVariant = "default";
+    statusMessage = "Connected! The database responded with the timestamp below.";
   } else if (error) {
+    statusLabel = "Error";
+    statusVariant = "destructive";
     statusMessage = error;
   }
 
   return (
-    <section className="w-full max-w-xl rounded-lg border border-black/[.08] dark:border-white/[.145] bg-white/60 dark:bg-black/40 p-4 shadow-sm backdrop-blur">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-base font-semibold">Cloudflare D1 connection check</h2>
-          <p className="mt-1 text-sm text-black/80 dark:text-white/80">{statusMessage}</p>
+    <Card className="h-full">
+      <CardHeader className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground">
+              <Database className="h-5 w-5" />
+            </span>
+            <CardTitle>Cloudflare D1</CardTitle>
+          </div>
+          <Badge variant={statusVariant}>{statusLabel}</Badge>
         </div>
-        <button
-          type="button"
-          onClick={handleCheckConnection}
-          disabled={isLoading}
-          className="h-10 shrink-0 rounded-full border border-solid border-black/[.08] bg-white/70 px-4 text-sm font-medium transition-colors hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-70 dark:border-white/[.145] dark:bg-black/40 dark:hover:bg-black/60"
-        >
+        <CardDescription>{statusMessage}</CardDescription>
+      </CardHeader>
+      {timestamp ? (
+        <CardContent>
+          <div className="rounded-lg border border-dashed border-border bg-muted/60 p-4 font-mono text-sm">
+            {timestamp} (UTC)
+          </div>
+        </CardContent>
+      ) : null}
+      <CardFooter className="justify-end border-t border-border pt-6">
+        <Button onClick={handleCheckConnection} disabled={isLoading}>
           {isLoading ? "Checking..." : "Check now"}
-        </button>
-      </div>
-    </section>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

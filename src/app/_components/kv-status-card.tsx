@@ -1,6 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { KeyRound } from "lucide-react";
+
+import { Badge, type BadgeProps } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type KvKey = {
   name: string;
@@ -55,7 +67,8 @@ export function KvStatusCard() {
       setKeys(payload.keys);
       setIsListComplete(payload.listComplete);
     } catch (fetchError) {
-      const message = fetchError instanceof Error ? fetchError.message : "Failed to query KV. Please try again.";
+      const message =
+        fetchError instanceof Error ? fetchError.message : "Failed to query KV. Please try again.";
       setKeys(null);
       setIsListComplete(true);
       setError(message);
@@ -65,10 +78,17 @@ export function KvStatusCard() {
   };
 
   let statusMessage = "Click the button to list a few keys from your KV namespace.";
+  let statusLabel: string = "Idle";
+  let statusVariant: BadgeProps["variant"] = "outline";
 
   if (isLoading) {
+    statusLabel = "Checking";
+    statusVariant = "secondary";
     statusMessage = "Querying KV namespace...";
   } else if (keys) {
+    statusLabel = "Connected";
+    statusVariant = "default";
+
     if (keys.length === 0) {
       statusMessage = "Connected! The namespace is currently empty.";
     } else {
@@ -76,45 +96,55 @@ export function KvStatusCard() {
       statusMessage = `Connected! Showing ${keys.length} ${countLabel} from the namespace.`;
     }
   } else if (error) {
+    statusLabel = "Error";
+    statusVariant = "destructive";
     statusMessage = error;
   }
 
   return (
-    <section className="w-full max-w-xl rounded-lg border border-black/[.08] dark:border-white/[.145] bg-white/60 dark:bg-black/40 p-4 shadow-sm backdrop-blur">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="w-full">
-          <h2 className="text-base font-semibold">Cloudflare KV connection check</h2>
-          <p className="mt-1 text-sm text-black/80 dark:text-white/80">{statusMessage}</p>
-
-          {keys && keys.length > 0 ? (
-            <ul className="mt-3 space-y-2 text-sm text-black/80 dark:text-white/80">
-              {keys.map((key) => (
-                <li key={key.name} className="rounded-md bg-black/[.04] p-2 dark:bg-white/[.06]">
-                  <p className="font-medium break-all">{key.name}</p>
-                  {key.expiration ? (
-                    <p className="text-xs text-black/70 dark:text-white/70">
-                      Expires {formatExpiration(key.expiration)}
-                    </p>
-                  ) : null}
-                </li>
-              ))}
-              {!isListComplete ? (
-                <li className="text-xs text-black/70 dark:text-white/70">
-                  Showing the first {keys.length} items. Add a prefix or pagination to fetch more.
-                </li>
-              ) : null}
-            </ul>
-          ) : null}
+    <Card className="h-full">
+      <CardHeader className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground">
+              <KeyRound className="h-5 w-5" />
+            </span>
+            <CardTitle>Cloudflare KV</CardTitle>
+          </div>
+          <Badge variant={statusVariant}>{statusLabel}</Badge>
         </div>
-        <button
-          type="button"
-          onClick={handleCheckKv}
-          disabled={isLoading}
-          className="h-10 shrink-0 rounded-full border border-solid border-black/[.08] bg-white/70 px-4 text-sm font-medium transition-colors hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-70 dark:border-white/[.145] dark:bg-black/40 dark:hover:bg-black/60"
-        >
+        <CardDescription>{statusMessage}</CardDescription>
+      </CardHeader>
+      {keys && keys.length > 0 ? (
+        <CardContent className="space-y-3">
+          <ul className="grid gap-3 text-sm">
+            {keys.map((key) => (
+              <li
+                key={key.name}
+                className="rounded-lg border border-border/80 bg-muted/50 p-3"
+              >
+                <p className="font-medium text-foreground break-all">{key.name}</p>
+                {key.expiration ? (
+                  <p className="text-xs text-muted-foreground">
+                    Expires {formatExpiration(key.expiration)}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+          {!isListComplete ? (
+            <p className="text-xs text-muted-foreground">
+              Showing the first {keys.length} items. Add a prefix or pagination
+              to fetch more.
+            </p>
+          ) : null}
+        </CardContent>
+      ) : null}
+      <CardFooter className="justify-end border-t border-border pt-6">
+        <Button onClick={handleCheckKv} disabled={isLoading}>
           {isLoading ? "Checking..." : "List keys"}
-        </button>
-      </div>
-    </section>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
