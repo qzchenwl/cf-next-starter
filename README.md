@@ -94,3 +94,11 @@ npm run storybook
 ```
 
 The `UI/Button/Gallery` story showcases every variant and size in one canvas, which is helpful when reviewing states or capturing comparison screenshots.
+
+Storybook's testing widget is enabled via the Vitest addon. Run all stories as component tests (matching the official [Writing Tests](https://storybook.js.org/docs/writing-tests) workflow) with:
+
+```bash
+npm run test-storybook
+```
+
+Toggle **Watch**, **Accessibility**, or **Coverage** within the Storybook sidebar to iterate interactively, or wire the same command into CI to execute the Chromium-powered Playwright run that backs the widget.

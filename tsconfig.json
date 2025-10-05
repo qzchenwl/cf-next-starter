@@ -23,6 +23,7 @@
     },
     "types": [
         "./cloudflare-env.d.ts",
+        "./vitest.shims.d.ts",
         "node",
         "vitest/globals"
     ]

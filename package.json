@@ -14,7 +14,8 @@
 		"cf:build": "opennextjs-cloudflare build",
 		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
+		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+		"test-storybook": "vitest run --project storybook"
 	},
 	"dependencies": {
 		"@opennextjs/cloudflare": "^1.3.0",
@@ -28,10 +29,11 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
-		"@storybook/addon-essentials": "^8.6.14",
-		"@storybook/addon-interactions": "^8.6.14",
-		"@storybook/react-vite": "^8.6.14",
-		"@storybook/test": "^8.6.14",
+		"@storybook/addon-essentials": "^9.0.0-alpha.12",
+		"@storybook/addon-interactions": "^9.0.0-alpha.10",
+		"@storybook/addon-vitest": "^9.1.10",
+		"@storybook/react-vite": "^9.1.10",
+		"@storybook/test": "^9.0.0-alpha.2",
 		"@tailwindcss/postcss": "^4",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.0",
@@ -39,13 +41,17 @@
 		"@types/node": "^20.19.19",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"@vitest/browser": "^3.2.4",
+		"@vitest/runner": "^3.2.4",
 		"eslint": "^9",
 		"eslint-config-next": "15.4.6",
 		"jsdom": "^27.0.0",
-		"storybook": "^8.6.14",
+		"storybook": "^9.1.10",
 		"tailwindcss": "^4",
 		"typescript": "^5",
 		"vitest": "^3.2.4",
-		"wrangler": "^4.42.0"
+		"wrangler": "^4.42.0",
+		"playwright": "^1.55.1",
+		"@vitest/coverage-v8": "3.2.4"
 	}
 }
