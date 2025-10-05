@@ -36,7 +36,8 @@ export function D1StatusCard() {
       const payload = (await response.json()) as TimestampResponse;
 
       if (!response.ok || !payload.ok || !payload.currentTimestamp) {
-        const message = payload.error ?? `Request failed with status ${response.status}`;
+        const message =
+          payload.error ?? `Request failed with status ${response.status}`;
         throw new Error(message);
       }
 
@@ -64,7 +65,8 @@ export function D1StatusCard() {
   } else if (timestamp) {
     statusLabel = "Connected";
     statusVariant = "default";
-    statusMessage = "Connected! The database responded with the timestamp below.";
+    statusMessage =
+      "Connected! The database responded with the timestamp below.";
   } else if (error) {
     statusLabel = "Error";
     statusVariant = "destructive";

@@ -48,7 +48,10 @@ export function R2StatusCard() {
       const payload = (await response.json()) as R2Response;
 
       if (!response.ok || !payload.ok) {
-        const message = "error" in payload ? payload.error : `Request failed with status ${response.status}`;
+        const message =
+          "error" in payload
+            ? payload.error
+            : `Request failed with status ${response.status}`;
         throw new Error(message);
       }
 
@@ -56,7 +59,9 @@ export function R2StatusCard() {
       setIsTruncated(payload.truncated);
     } catch (fetchError) {
       const message =
-        fetchError instanceof Error ? fetchError.message : "Failed to read from R2. Please try again.";
+        fetchError instanceof Error
+          ? fetchError.message
+          : "Failed to read from R2. Please try again.";
       setObjects(null);
       setIsTruncated(false);
       setError(message);
@@ -65,7 +70,8 @@ export function R2StatusCard() {
     }
   };
 
-  let statusMessage = "Click the button to list a few objects from your R2 bucket.";
+  let statusMessage =
+    "Click the button to list a few objects from your R2 bucket.";
   let statusLabel: string = "Idle";
   let statusVariant: BadgeProps["variant"] = "outline";
 
@@ -123,8 +129,8 @@ export function R2StatusCard() {
           </ul>
           {isTruncated ? (
             <p className="text-xs text-muted-foreground">
-              Showing the first {objects.length} items. Add a prefix or pagination
-              to fetch more.
+              Showing the first {objects.length} items. Add a prefix or
+              pagination to fetch more.
             </p>
           ) : null}
         </CardContent>

@@ -60,7 +60,10 @@ export function KvStatusCard() {
       const payload = (await response.json()) as KvResponse;
 
       if (!response.ok || !payload.ok) {
-        const message = "error" in payload ? payload.error : `Request failed with status ${response.status}`;
+        const message =
+          "error" in payload
+            ? payload.error
+            : `Request failed with status ${response.status}`;
         throw new Error(message);
       }
 
@@ -68,7 +71,9 @@ export function KvStatusCard() {
       setIsListComplete(payload.listComplete);
     } catch (fetchError) {
       const message =
-        fetchError instanceof Error ? fetchError.message : "Failed to query KV. Please try again.";
+        fetchError instanceof Error
+          ? fetchError.message
+          : "Failed to query KV. Please try again.";
       setKeys(null);
       setIsListComplete(true);
       setError(message);
@@ -77,7 +82,8 @@ export function KvStatusCard() {
     }
   };
 
-  let statusMessage = "Click the button to list a few keys from your KV namespace.";
+  let statusMessage =
+    "Click the button to list a few keys from your KV namespace.";
   let statusLabel: string = "Idle";
   let statusVariant: BadgeProps["variant"] = "outline";
 
@@ -123,7 +129,9 @@ export function KvStatusCard() {
                 key={key.name}
                 className="rounded-lg border border-border/80 bg-muted/50 p-3"
               >
-                <p className="font-medium text-foreground break-all">{key.name}</p>
+                <p className="font-medium text-foreground break-all">
+                  {key.name}
+                </p>
                 {key.expiration ? (
                   <p className="text-xs text-muted-foreground">
                     Expires {formatExpiration(key.expiration)}

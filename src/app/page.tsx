@@ -34,7 +34,8 @@ const resourceLinks = [
   },
   {
     title: "Next.js Documentation",
-    description: "Brush up on the App Router, server components, and streaming UI.",
+    description:
+      "Brush up on the App Router, server components, and streaming UI.",
     href: "https://nextjs.org/docs",
     icon: BookOpenText,
   },
@@ -60,8 +61,8 @@ export default function Home() {
               </h1>
               <p className="text-base text-muted-foreground sm:text-lg">
                 Inspect your Cloudflare bindings, validate connections, and ship
-                with confidence using a refreshed dashboard powered by
-                shadcn/ui components.
+                with confidence using a refreshed dashboard powered by shadcn/ui
+                components.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -88,7 +89,10 @@ export default function Home() {
           </div>
 
           <div className="relative hidden h-full w-full items-center justify-center md:flex">
-            <div className="absolute inset-0 rounded-3xl bg-primary/10 blur-2xl" aria-hidden />
+            <div
+              className="absolute inset-0 rounded-3xl bg-primary/10 blur-2xl"
+              aria-hidden
+            />
             <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-10 shadow-lg">
               <Image
                 className="dark:invert"
