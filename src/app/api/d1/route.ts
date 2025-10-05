@@ -8,9 +8,9 @@ type TimestampRow = {
 export async function GET() {
   try {
     const { env } = await getCloudflareContext({ async: true });
-    const row = await env.D1
-      .prepare("SELECT datetime('now') as currentTimestamp")
-      .first<TimestampRow>();
+    const row = await env.D1.prepare(
+      "SELECT datetime('now') as currentTimestamp",
+    ).first<TimestampRow>();
 
     return NextResponse.json({
       ok: true,
