@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, BookOpenText, Cloud, Workflow } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -52,9 +51,6 @@ export default function Home() {
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-12 sm:px-10 lg:px-12">
         <header className="grid gap-10 md:grid-cols-[minmax(0,1fr)_320px] md:items-center">
           <div className="space-y-6">
-            <Badge variant="secondary" className="w-fit px-3 py-1">
-              Now styled with shadcn/ui
-            </Badge>
             <div className="space-y-3">
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 Cloudflare + Next.js starter kit
