@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-import { D1StatusCard } from "./_components/d1-status-card";
-import { KvStatusCard } from "./_components/kv-status-card";
-import { R2StatusCard } from "./_components/r2-status-card";
+import { D1StatusCard } from "@/components/d1-status-card";
+import { KvStatusCard } from "@/components/kv-status-card";
+import { R2StatusCard } from "@/components/r2-status-card";
 
 const resourceLinks = [
   {
@@ -29,7 +29,7 @@ const resourceLinks = [
     title: "OpenNext for Cloudflare",
     description:
       "Learn how OpenNext builds optimized Workers bundles for Next.js projects.",
-    href: "https://developers.cloudflare.com/workers/frameworks/open-next/",
+    href: "https://github.com/cloudflare/open-next",
     icon: Workflow,
   },
   {
@@ -74,7 +74,7 @@ export default function Home() {
                 Deploy to Vercel
               </Link>
               <Link
-                href="https://developers.cloudflare.com/workers/frameworks/open-next/"
+                href="https://github.com/cloudflare/open-next"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
