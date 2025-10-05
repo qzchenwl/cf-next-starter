@@ -1,22 +1,7 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import Image from "next/image";
+import { D1StatusCard } from "./_components/d1-status-card";
 
-async function getDatabaseTimestamp() {
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    const row = await env.cf_next_starter_d1
-      .prepare("SELECT datetime('now') as currentTimestamp")
-      .first<{ currentTimestamp: string }>();
-
-    return row?.currentTimestamp ?? null;
-  } catch (error) {
-    console.error("Failed to load data from D1", error);
-    return null;
-  }
-}
-
-export default async function Home() {
-  const currentTimestamp = await getDatabaseTimestamp();
+export default function Home() {
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -68,14 +53,7 @@ export default async function Home() {
           </a>
         </div>
 
-        <section className="w-full max-w-xl rounded-lg border border-black/[.08] dark:border-white/[.145] bg-white/60 dark:bg-black/40 p-4 shadow-sm backdrop-blur">
-          <h2 className="text-base font-semibold">Cloudflare D1 connection check</h2>
-          <p className="mt-2 text-sm text-black/80 dark:text-white/80">
-            {currentTimestamp
-              ? `Connected! The database responded with ${currentTimestamp} (UTC).`
-              : "We couldn't read from D1 yet. Make sure you've created the database and run your migrations."}
-          </p>
-        </section>
+        <D1StatusCard />
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a

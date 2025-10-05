@@ -17,7 +17,7 @@ You can start editing the UI by modifying `src/app/page.tsx`. API routes live al
 
 The project is pre-wired to use the `cf-next-starter-d1` database that was created with Wrangler:
 
-- `wrangler.jsonc` declares the `cf_next_starter_d1` binding.
+- `wrangler.jsonc` declares the `D1` binding.
 - `cloudflare-env.d.ts` exposes the binding in TypeScript so you can access it through `getCloudflareContext()` (or the `cloudflare:env` module within Worker code).
 - `src/app/api/d1/route.ts` and the home page demonstrate how to query the database with a simple `SELECT datetime('now')` statement.
 

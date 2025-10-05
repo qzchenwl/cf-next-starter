@@ -18,7 +18,7 @@
   },
   "d1_databases": [
     {
-      "binding": "cf_next_starter_d1",
+      "binding": "D1",
       "database_name": "cf-next-starter-d1",
       "database_id": "0a0a015b-bb22-4f71-816c-f11af16844c9"
     }
