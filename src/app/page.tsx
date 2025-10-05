@@ -29,7 +29,7 @@ const resourceLinks = [
     title: "OpenNext for Cloudflare",
     description:
       "Learn how OpenNext builds optimized Workers bundles for Next.js projects.",
-    href: "https://github.com/cloudflare/open-next",
+    href: "https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/",
     icon: Workflow,
   },
   {
@@ -75,7 +75,7 @@ export default function Home() {
                 Deploy to Vercel
               </Link>
               <Link
-                href="https://github.com/cloudflare/open-next"
+                href="https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
