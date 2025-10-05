@@ -40,6 +40,17 @@ wrangler d1 migrations apply cf-next-starter-d1
 
 Whenever you add new bindings or tables, re-run `npm run cf-typegen` to refresh the strongly-typed environment bindings.
 
+## Cloudflare R2 integration
+
+Object storage is available out of the box through the `cf-next-starter-r2` bucket:
+
+- `wrangler.jsonc` declares the `R2` bucket binding.
+- `cloudflare-env.d.ts` exposes the binding in TypeScript.
+- `src/app/api/r2/route.ts` lists the first few objects stored in the bucket so you can quickly verify access.
+- The home page renders an R2 status card alongside the D1 widget so you can trigger the API call from the UI.
+
+Re-run `npm run cf-typegen` after changing the binding name or adding additional buckets to keep the TypeScript definitions in sync.
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs) – learn about features and APIs.

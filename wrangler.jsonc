@@ -12,10 +12,17 @@
     "global_fetch_strictly_public"
   ],
   "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "binding": "ASSETS",
     "directory": ".open-next/assets"
   },
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "cf-next-starter-r2"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "D1",
