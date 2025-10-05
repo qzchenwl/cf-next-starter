@@ -16,7 +16,7 @@
 
 ## Coding Style & Naming Conventions
 - Write TypeScript and prefer functional React components; keep default exports for pages and layouts.
-- Use two-space indentation, PascalCase for React components, camelCase for hooks/utilities, and SCREAMING_SNAKE_CASE for env constants.
+- Use two-space indentation, PascalCase for React components, camelCase for hooks/utilities, and SCREAMING_SNAKE_CASE for env constants. Keep `package.json` indented with hard tabs.
 - Tailwind CSS utilities are available through PostCSS; scope bespoke styles with CSS modules when utilities are insufficient.
 - Run `npm run lint` (or `npx eslint . --fix` for autofixes) before pushing.
 
