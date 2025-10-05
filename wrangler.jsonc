@@ -39,6 +39,30 @@
   ],
   "observability": {
     "enabled": true
+  },
+  "env": {
+    "preview": {
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "cf-next-starter-r2-preview"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "KV",
+          "id": "b06fb021a5a24543849cb12f8fd504c8",
+          "preview_id": "b06fb021a5a24543849cb12f8fd504c8"
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "D1",
+          "database_name": "cf-next-starter-d1-preview",
+          "database_id": "58724aa6-fa82-43fb-8f5a-75b394cb38dd"
+        }
+      ]
+    }
   }
   /**
    * Smart Placement
