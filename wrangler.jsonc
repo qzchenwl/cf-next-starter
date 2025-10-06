@@ -75,7 +75,13 @@
           "database_id": "58724aa6-fa82-43fb-8f5a-75b394cb38dd",
           "migrations_dir": "drizzle"
         }
-      ]
+      ],
+      "send_email": [
+        {
+          "name": "SEND_EMAIL",
+          "allowed_sender_addresses": ["noreply@cwllll.com"]
+        }
+      ],
     }
   }
   /**
