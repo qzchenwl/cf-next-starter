@@ -19,7 +19,9 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
-		"test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=reports/vitest-junit.xml",
+		"test:ci": "npm run test:ci:vitest && npm run test:ci:playwright",
+		"test:ci:vitest": "vitest run --coverage --reporter=default --reporter=junit --outputFile=reports/vitest-junit.xml",
+		"test:ci:playwright": "playwright test --reporter=line",
 		"test:playwright": "playwright test"
 	},
 	"dependencies": {
