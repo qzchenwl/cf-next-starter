@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
           cache: npm
 
       - name: Install dependencies
@@ -55,7 +55,7 @@ jobs:
 
       - name: Vitest Test Report
         uses: dorny/test-reporter@v2
-        if: ${{ !cancelled() }}       # run this step even if previous step failed
+        if: ${{ !cancelled() }} # run this step even if previous step failed
         with:
           name: Vitest
           path: reports/vitest-junit.xml
@@ -67,4 +67,4 @@ jobs:
         with:
           name: Playwright
           path: reports/playwright/results.xml
-          reporter: junit
+          reporter: jest-junit
