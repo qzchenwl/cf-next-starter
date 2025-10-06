@@ -2,14 +2,14 @@ This is a [Next.js](https://nextjs.org) starter tailored for [Cloudflare Workers
 
 ## Getting Started
 
-Install dependencies and run the development server:
+Install dependencies and launch the Cloudflare-local development server:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The landing page now includes a live connectivity check against the provisioned Cloudflare D1 database.
+The script first packages the Worker bundle with `npm run cf:build` (which runs the OpenNext Cloudflare builder and, in turn, executes the default `npm run build` Next.js compilation), then launches `wrangler dev --local` so the Worker is available at [http://localhost:8787](http://localhost:8787). The landing page now includes a live connectivity check against the provisioned Cloudflare D1 database.
 
 You can start editing the UI by modifying `src/app/page.tsx`. API routes live alongside the App Router at `src/app/api/*`.
 
@@ -23,22 +23,26 @@ The project is pre-wired to use the `cf-next-starter-d1` database that was creat
 
 ### Managing migrations
 
-Create a migrations directory and generate your first migration:
+Drizzle Kit drives schema changes for the D1 database declared in `wrangler.jsonc`:
 
 ```bash
-mkdir -p migrations
-wrangler d1 migrations create cf-next-starter-d1 init
+# create SQL from the current schema definitions
+npx drizzle-kit generate
+
+# apply unapplied migrations to the configured database
+npx drizzle-kit migrate
+
+# quickly push an updated schema without creating a migration file
+npx drizzle-kit push
 ```
 
-Apply migrations locally or remotely:
+Both `npm run deploy` and `npm run preview` trigger `drizzle-kit migrate` automatically via npm pre-scripts (`predeploy` → `precf:deploy` and `prepreview` → `precf:preview`), so the latest migrations are applied before the Worker is published. Use the preview script whenever you want to push through the Cloudflare Versions API:
 
 ```bash
-wrangler d1 migrations apply cf-next-starter-d1 --local
-# or deploy to Cloudflare
-wrangler d1 migrations apply cf-next-starter-d1
+npm run preview
 ```
 
-Whenever you add new bindings or tables, re-run `npm run cf-typegen` to refresh the strongly-typed environment bindings.
+Set `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in the environment running the scripts so Drizzle can authenticate against the target database. Whenever you add new bindings or tables, re-run `npm run cf-typegen` to refresh the strongly-typed environment bindings. If you prefer to skip the wrappers that Cloudflare Dash consumes, the lower-level commands `npm run cf:deploy` and `npm run cf:preview` are also available and reuse the same migration hooks.
 
 ## Cloudflare R2 integration
 
@@ -105,10 +109,10 @@ Every push and pull request triggers `.github/workflows/test.yml`. The workflow 
 
 ## Deployment
 
-Use Wrangler to build and deploy the Worker bundle:
+Use OpenNext and Wrangler to build and deploy the Worker bundle (the top-level scripts proxy to their Cloudflare-specific counterparts):
 
 ```bash
-npm run cf:build
+npm run build
 npm run deploy
 ```
 
