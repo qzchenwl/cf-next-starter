@@ -1,36 +1,28 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-- Source lives under `src/app` using the App Router; colocate route components and supporting modules in the relevant folder.
-- Global styling stays in `src/app/globals.css`; shared assets go in `public/`.
-- Cloudflare integration is configured through `next.config.ts`, `open-next.config.ts`, and `wrangler.jsonc`; platform bindings are typed in `cloudflare-env.d.ts`.
+## Architecture Overview
 
-## Build, Test, and Development Commands
-- `npm run dev` — Next.js dev server with the Cloudflare shim at http://localhost:3000.
-- `npm run build` — Create the production bundle and `.open-next/` worker artifacts.
-- `npm run start` — Serve the compiled app locally for smoke checks.
-- `npm run lint` — ESLint with `next/core-web-vitals` and TypeScript rules.
-- `npm run cf:build` — Build the worker bundle without deploying; use in CI.
-- `npm run preview` / `npm run deploy` — Build then publish to the requested Cloudflare environment.
-- `npm run cf-typegen` — Regenerate `cloudflare-env.d.ts` after changing bindings or secrets.
+- Next.js App Router project targeting Cloudflare Workers via OpenNext; keep worker-specific configuration in `next.config.ts`, `open-next.config.ts`, and `wrangler.jsonc`.
+- Server runtime state (KV, R2, D1) is accessed through `@opennextjs/cloudflare#getCloudflareContext`; avoid using global `process.env` inside request handlers.
+- Authentication is centralized in `src/lib/auth.ts` using BetterAuth with the Drizzle adapter. Extend auth flows by updating that factory rather than wiring new handlers ad hoc.
+- The Cloudflare D1 schema for BetterAuth lives in `src/db/schema.ts` and is mirrored in `drizzle/0000_gigantic_cargill.sql` plus the metadata snapshot. Update both when adding tables.
 
-## Coding Style & Naming Conventions
-- Write TypeScript and prefer functional React components; keep default exports for pages and layouts.
-- Use two-space indentation, PascalCase for React components, camelCase for hooks/utilities, and SCREAMING_SNAKE_CASE for env constants. Keep `package.json` indented with hard tabs.
-- Tailwind CSS utilities are available through PostCSS; scope bespoke styles with CSS modules when utilities are insufficient.
-- Run `npm run lint` (or `npx eslint . --fix` for autofixes) before pushing.
+## Coding Conventions
 
-## Testing Guidelines
-- A test runner is not bundled yet; adopt `vitest` + `@testing-library/react` and name files `*.test.tsx` alongside the code they cover.
-- Add an `npm test` script (`vitest run` recommended) and keep statement coverage near 80% for new modules; explain exceptions in the PR.
-- Until a test suite lands, treat `npm run lint` and deploy previews as required validation.
+- TypeScript everywhere; React components should stay functional. Route handlers must remain the default exports for App Router segments.
+- Two-space indentation, PascalCase for components, camelCase for utilities/hooks, and SCREAMING_SNAKE_CASE for runtime env constants.
+- Prefer shadcn/ui primitives from `src/components/ui`. Co-locate client components under `src/components` and keep them small and testable.
+- For auth UI, reuse the shared `AuthPanel` component instead of duplicating fetch logic across pages.
 
-## Commit & Pull Request Guidelines
-- Follow the git history: imperative, present-tense commit titles with optional prefixes like `chore:` or `feat:` when useful.
-- Squash WIP commits, provide a concise PR summary, link issues, and attach screenshots or logs for UI or deployment changes.
-- Call out infrastructure touches (secrets, bindings, migrations) and checklist the verification steps you performed.
+## Auth Workflow Expectations
 
-## Cloudflare & Deployment Notes
-- `initOpenNextCloudflareForDev` in `next.config.ts` must remain at the bottom so the dev worker hooks in correctly.
-- Manage secrets with `wrangler secret put`; mirror non-secret defaults in `cloudflare-env.d.ts` to preserve type safety.
-- After editing `wrangler.jsonc`, rerun `npm run cf:build` before requesting review to catch worker regressions.
+- Email+password sign-up must post to `/api/auth/sign-up/email` with a `callbackURL` that lands on `/auth/verify-email`.
+- Enforce email verification before issuing sessions; login attempts for unverified users should surface the BetterAuth error message in the UI.
+- `sendVerificationEmail` relies on `RESEND_API_KEY` and `RESEND_FROM_EMAIL`; log a warning but do not throw if they are missing so local development still works.
+- When adjusting auth, verify cookie handling for Cloudflare Workers (no Node-only APIs) and keep `credentials: "include"` on client fetches.
+
+## Tooling & Verification
+
+- Use the provided npm scripts: `npm run dev`, `npm run build`, `npm run lint`, and `npm run test` (Vitest). Linting is the minimum bar before sending a PR.
+- Avoid long-running filesystem scans (`ls -R`, `grep -R`); rely on `rg` for search.
+- Commit messages stay imperative and concise. When preparing PRs, summarize auth flows and note any schema changes or new env variables.
