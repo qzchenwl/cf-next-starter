@@ -62,6 +62,41 @@ The starter now includes a `cf-next-starter-kv` namespace for key-value storage:
 
 Remember to run `npm run cf-typegen` after updating the binding name or adding additional namespaces.
 
+## Storybook UI development
+
+Run the interactive component workbench on [http://localhost:6006](http://localhost:6006):
+
+```bash
+npm run storybook
+```
+
+Stories live alongside your components (for example `*.stories.tsx`). Global styles from `src/app/globals.css` are automatically applied so the preview matches the Next.js app. The Storybook Vitest addon is configured, enabling interaction and accessibility testing widgets directly in the UI.
+
+Generate a static Storybook bundle for publishing or sharing with teammates:
+
+```bash
+npm run build-storybook
+```
+
+## Testing
+
+Component tests use [Vitest](https://vitest.dev/) together with [Testing Library](https://testing-library.com/docs/react-testing-library/intro/):
+
+```bash
+npm test          # run the full suite once
+npm run test:watch # rerun relevant tests on change
+npm run test:coverage # produce an HTML + lcov coverage report
+```
+
+The configuration loads Testing Library matchers globally and adds Storybook stories as browser-based tests. Coverage output lives in `coverage/`, while CI runs additionally write a JUnit report to `reports/vitest-junit.xml` for workflow summaries.
+
+> [!NOTE]
+> The first time you run the suite locally, execute `npx playwright install --with-deps chromium` to download the headless browser and the Linux dependencies Storybook Test requires.
+
+## Continuous integration
+
+Every push and pull request triggers `.github/workflows/test.yml`. The workflow installs dependencies, lints the project, runs `npm run test:ci` (which includes Storybook-powered tests and coverage), and uploads the resulting reports as build artifacts. When the pull request originates from this repository (not a fork), the workflow also annotates the discussion with the Vitest summary.
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs) – learn about features and APIs.
