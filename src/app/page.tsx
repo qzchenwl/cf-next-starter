@@ -3,13 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, BookOpenText, Cloud, Workflow } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 import { D1StatusCard } from "@/components/d1-status-card";
@@ -19,22 +13,19 @@ import { R2StatusCard } from "@/components/r2-status-card";
 const resourceLinks = [
   {
     title: "Cloudflare Workers",
-    description:
-      "Deploy your Next.js application to the edge with the Workers platform.",
+    description: "Deploy your Next.js application to the edge with the Workers platform.",
     href: "https://developers.cloudflare.com/workers/",
     icon: Cloud,
   },
   {
     title: "OpenNext for Cloudflare",
-    description:
-      "Learn how OpenNext builds optimized Workers bundles for Next.js projects.",
+    description: "Learn how OpenNext builds optimized Workers bundles for Next.js projects.",
     href: "https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/",
     icon: Workflow,
   },
   {
     title: "Next.js Documentation",
-    description:
-      "Brush up on the App Router, server components, and streaming UI.",
+    description: "Brush up on the App Router, server components, and streaming UI.",
     href: "https://nextjs.org/docs",
     icon: BookOpenText,
   },
@@ -56,28 +47,24 @@ export default function Home() {
                 Cloudflare + Next.js starter kit
               </h1>
               <p className="text-base text-muted-foreground sm:text-lg">
-                Inspect your Cloudflare bindings, validate connections, and ship
-                with confidence using a refreshed dashboard powered by shadcn/ui
-                components.
+                Inspect your Cloudflare bindings, validate connections, and ship with confidence
+                using a refreshed dashboard powered by shadcn/ui components.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+                href="https://dash.cloudflare.com/?to=/:account/workers-and-pages/create"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(buttonVariants({ size: "lg" }), "sm:w-auto")}
               >
-                Deploy to Vercel
+                Deploy to Cloudflare Workers
               </Link>
               <Link
                 href="https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "lg" }),
-                  "sm:w-auto",
-                )}
+                className={cn(buttonVariants({ variant: "outline", size: "lg" }), "sm:w-auto")}
               >
                 View Cloudflare guide
               </Link>
@@ -85,10 +72,7 @@ export default function Home() {
           </div>
 
           <div className="relative hidden h-full w-full items-center justify-center md:flex">
-            <div
-              className="absolute inset-0 rounded-3xl bg-primary/10 blur-2xl"
-              aria-hidden
-            />
+            <div className="absolute inset-0 rounded-3xl bg-primary/10 blur-2xl" aria-hidden />
             <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-10 shadow-lg">
               <Image
                 className="dark:invert"
@@ -115,19 +99,14 @@ export default function Home() {
                   </span>
                   <CardTitle className="text-xl">{title}</CardTitle>
                 </div>
-                <CardDescription className="text-sm leading-relaxed">
-                  {description}
-                </CardDescription>
+                <CardDescription className="text-sm leading-relaxed">{description}</CardDescription>
               </CardHeader>
               <CardFooter className="flex items-center justify-end">
                 <Link
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn(
-                    buttonVariants({ variant: "ghost" }),
-                    "gap-2 text-sm font-medium",
-                  )}
+                  className={cn(buttonVariants({ variant: "ghost" }), "gap-2 text-sm font-medium")}
                 >
                   Explore
                   <ArrowUpRight className="h-4 w-4" />
@@ -146,8 +125,7 @@ export default function Home() {
         <footer className="border-t border-border pt-8">
           <div className="flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>
-              Built with Next.js, OpenNext, and Cloudflare Workers — ready for
-              your next deployment.
+              Built with Next.js, OpenNext, and Cloudflare Workers — ready for your next deployment.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
