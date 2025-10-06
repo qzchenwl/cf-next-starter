@@ -7,6 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
+		"cf:dev": "npm run cf:build && npx wrangler dev",
 		"cf:build": "opennextjs-cloudflare build",
 		"predeploy": "drizzle-kit migrate",
 		"deploy": "wrangler deploy",
