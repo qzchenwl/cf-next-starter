@@ -20,11 +20,11 @@
   "send_email": [
     {
       "name": "SEND_EMAIL",
-      "allowed_sender_addresses": ["noreply@example.com"]
+      "allowed_sender_addresses": ["noreply@cwllll.com"]
     }
   ],
   "vars": {
-    "SEND_EMAIL_FROM_ADDRESS": "noreply@example.com",
+    "SEND_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
     "SEND_EMAIL_FROM_NAME": "Cloudflare Next Starter"
   },
   "r2_buckets": [
@@ -53,7 +53,7 @@
   "env": {
     "preview": {
       "vars": {
-        "SEND_EMAIL_FROM_ADDRESS": "noreply@example.com",
+        "SEND_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
         "SEND_EMAIL_FROM_NAME": "Cloudflare Next Starter"
       },
       "r2_buckets": [
