@@ -18,7 +18,11 @@ export function AuthStatusCard() {
   const [status, setStatus] = useState<"checking" | "logged-in" | "logged-out">("checking");
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeAction, setActiveAction] = useState<"login" | "register" | null>(null);
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
 
   // Initial session state
   useEffect(() => {
@@ -27,34 +31,100 @@ export function AuthStatusCard() {
       const { data: session } = await authClient.getSession();
       if (session?.user) {
         setUserEmail(session.user.email);
+        setEmailInput(session.user.email ?? "");
+        setPasswordInput("");
         setStatus("logged-in");
       } else {
         setUserEmail(null);
+        setEmailInput("");
+        setPasswordInput("");
         setStatus("logged-out");
       }
     };
     void loadSession();
   }, []);
 
+  const ensureCredentials = () => {
+    const normalizedEmail = emailInput.trim();
+    const password = passwordInput;
+
+    if (!normalizedEmail || !password) {
+      setError("Please provide both email and password.");
+      return null;
+    }
+
+    return { email: normalizedEmail, password };
+  };
+
+  const refreshSession = async (fallbackEmail?: string) => {
+    const { data: session } = await authClient.getSession();
+    const nextEmail = session?.user?.email ?? null;
+    setUserEmail(nextEmail);
+    setEmailInput(nextEmail ?? fallbackEmail ?? "");
+    setStatus(session?.user ? "logged-in" : "logged-out");
+  };
+
   const handleLogin = async () => {
+    const credentials = ensureCredentials();
+    if (!credentials) {
+      return;
+    }
+
     setIsLoading(true);
+    setActiveAction("login");
     setError(null);
+    setInfo(null);
+    setEmailInput(credentials.email);
     try {
       const { error } = await authClient.signIn.email({
-        email: "test@example.com",
-        password: "password",
+        email: credentials.email,
+        password: credentials.password,
       });
       if (error) {
         setError(error.message ?? "Unknown error");
         return;
       }
-      const { data: session } = await authClient.getSession();
-      setUserEmail(session?.user.email ?? null);
-      setStatus(session ? "logged-in" : "logged-out");
+      await refreshSession(credentials.email);
+      setPasswordInput("");
+      setInfo("Signed in successfully.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsLoading(false);
+      setActiveAction(null);
+    }
+  };
+
+  const handleRegister = async () => {
+    const credentials = ensureCredentials();
+    if (!credentials) {
+      return;
+    }
+
+    setIsLoading(true);
+    setActiveAction("register");
+    setError(null);
+    setInfo(null);
+    setEmailInput(credentials.email);
+    try {
+      const { error } = await authClient.signUp.email({
+        name: credentials.email.split("@")[0],
+        email: credentials.email,
+        password: credentials.password,
+      });
+      if (error) {
+        setError(error.message ?? "Unknown error");
+        return;
+      }
+
+      await refreshSession(credentials.email);
+      setPasswordInput("");
+      setInfo("Account created successfully.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsLoading(false);
+      setActiveAction(null);
     }
   };
 
@@ -62,7 +132,10 @@ export function AuthStatusCard() {
     setIsLoading(true);
     await authClient.signOut();
     setUserEmail(null);
+    setEmailInput("");
+    setPasswordInput("");
     setStatus("logged-out");
+    setInfo(null);
     setIsLoading(false);
   };
 
@@ -107,15 +180,83 @@ export function AuthStatusCard() {
         </CardContent>
       )}
 
-      <CardFooter className="justify-end border-t border-border pt-6">
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <label className="block text-sm font-medium" htmlFor="auth-email">
+            Email
+          </label>
+          <input
+            id="auth-email"
+            type="email"
+            className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
+            placeholder="you@example.com"
+            value={emailInput}
+            onChange={(event) => {
+              setEmailInput(event.target.value);
+              if (error) {
+                setError(null);
+              }
+              if (info) {
+                setInfo(null);
+              }
+            }}
+            autoComplete="email"
+            disabled={isLoading || status !== "logged-out"}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="block text-sm font-medium" htmlFor="auth-password">
+            Password
+          </label>
+          <input
+            id="auth-password"
+            type="password"
+            className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
+            placeholder="Enter a secure password"
+            value={passwordInput}
+            onChange={(event) => {
+              setPasswordInput(event.target.value);
+              if (error) {
+                setError(null);
+              }
+              if (info) {
+                setInfo(null);
+              }
+            }}
+            autoComplete={status === "logged-in" ? "off" : "current-password"}
+            disabled={isLoading || status !== "logged-out"}
+          />
+        </div>
+        {info && (
+          <div className="rounded-md border border-muted bg-muted/20 p-3 text-sm text-muted-foreground">
+            {info}
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="flex-wrap gap-3 border-t border-border pt-6">
         {status === "logged-in" ? (
-          <Button onClick={handleLogout} disabled={isLoading}>
+          <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
             {isLoading ? "Signing out..." : "Sign out"}
           </Button>
         ) : (
-          <Button onClick={handleLogin} disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Quick Sign in"}
-          </Button>
+          <>
+            <Button
+              onClick={handleLogin}
+              disabled={isLoading || status === "checking"}
+              className="w-full flex-1 sm:flex-none"
+            >
+              {isLoading && activeAction === "login" ? "Signing in..." : "Sign in"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleRegister}
+              disabled={isLoading || status === "checking"}
+              className="w-full flex-1 sm:flex-none"
+            >
+              {isLoading && activeAction === "register" ? "Creating account..." : "Create account"}
+            </Button>
+          </>
         )}
       </CardFooter>
     </Card>
