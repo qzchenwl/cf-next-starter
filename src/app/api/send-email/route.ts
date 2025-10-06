@@ -1,8 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 const EMAIL_SUBJECT = "Cloudflare email routing test";
 
 function isValidEmail(value: string) {
@@ -35,10 +33,9 @@ export async function POST(request: Request) {
     return NextResponse.json(response, { status: 400 });
   }
 
-  const email =
-    typeof (payload as { email?: string }).email === "string"
-      ? (payload as { email?: string }).email.trim()
-      : "";
+  const maybeEmail = (payload as { email?: unknown }).email;
+  const rawEmail = typeof maybeEmail === "string" ? maybeEmail : "";
+  const email = rawEmail.trim();
 
   if (!isValidEmail(email)) {
     const response: SendEmailResponse = {
@@ -56,8 +53,7 @@ export async function POST(request: Request) {
     console.error("SEND_EMAIL_FROM_ADDRESS is not configured.");
     const response: SendEmailResponse = {
       ok: false,
-      error:
-        "The send email binding is missing a configured sender address.",
+      error: "The send email binding is missing a configured sender address.",
     };
 
     return NextResponse.json(response, { status: 500 });
@@ -76,20 +72,23 @@ export async function POST(request: Request) {
     `Sent at: ${timestamp}`,
   ];
 
-  const rawMessage =
-    [
-      `From: ${displayFrom}`,
-      `To: <${email}>`,
-      `Subject: ${EMAIL_SUBJECT}`,
-      `Date: ${timestamp}`,
-      "MIME-Version: 1.0",
-      "Content-Type: text/plain; charset=UTF-8",
-      "Content-Transfer-Encoding: 7bit",
-      "",
-      bodyLines.join("\n"),
-    ].join("\r\n");
+  const rawMessage = [
+    `From: ${displayFrom}`,
+    `To: <${email}>`,
+    `Subject: ${EMAIL_SUBJECT}`,
+    `Date: ${timestamp}`,
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: 7bit",
+    "",
+    bodyLines.join("\n"),
+  ].join("\r\n");
 
-  const { EmailMessage } = (await import("cloudflare:email")) as typeof import("cloudflare:email");
+  type EmailModule = typeof import("cloudflare:email");
+  const loadEmailModule = new Function("specifier", "return import(specifier);") as (
+    specifier: string,
+  ) => Promise<EmailModule>;
+  const { EmailMessage } = await loadEmailModule("cloudflare:email");
   const message = new EmailMessage(fromAddress, email, rawMessage);
 
   try {
