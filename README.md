@@ -45,7 +45,17 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
    npm run cf:dev
    ```
 
-   Whenever bindings or secrets change, run `npm run cf-typegen` to refresh `cloudflare-env.d.ts` for accurate IntelliSense.
+ Whenever bindings or secrets change, run `npm run cf-typegen` to refresh `cloudflare-env.d.ts` for accurate IntelliSense.
+
+## Send a Cloudflare test email
+
+Confirm that Email Routing is configured correctly before shipping features that rely on outbound messages:
+
+1. Enable [Email Routing](https://developers.cloudflare.com/email-routing/get-started/) and verify the destination addresses you plan to test with.
+2. Update the placeholder values for `SEND_EMAIL_FROM_ADDRESS` and `SEND_EMAIL_FROM_NAME` in `wrangler.jsonc` so they match an approved sender identity.
+3. Deploy (or run `npm run cf:dev`) and use the **Send a Cloudflare test email** card on the home page to fire a test message. The API route posts to the new `/api/send-email` endpoint, which invokes the `send_email` binding via `env.SEND_EMAIL`.
+
+If the Worker returns an error, inspect the Cloudflare Worker logs to confirm the binding is correctly scoped to your sender and recipient addresses.
 
 ## Automated Quality Gates
 
@@ -64,3 +74,4 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - 🛡️ **Type-safe platform bindings** – `cloudflare-env.d.ts` enumerates every Worker binding, keeping runtime configuration transparent and type checked.
 - 📦 **Modern full-stack architecture** – App Router layouts, server actions, and API routes come scaffolded for edge-friendly experiences across regions.
 - 🔁 **CI/CD friendly** – Wrangler-compatible commands, artifact uploads, and typed environment contracts keep your GitHub → Cloudflare workflow smooth and auditable.
+- 📧 **Email Routing sample** – A home page form targets the `/api/send-email` endpoint so you can validate Cloudflare's `send_email` binding end-to-end.

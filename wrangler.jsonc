@@ -17,6 +17,15 @@
     "binding": "ASSETS",
     "directory": ".open-next/assets"
   },
+  "send_email": [
+    {
+      "name": "SEND_EMAIL"
+    }
+  ],
+  "vars": {
+    "SEND_EMAIL_FROM_ADDRESS": "noreply@example.com",
+    "SEND_EMAIL_FROM_NAME": "Cloudflare Next Starter"
+  },
   "r2_buckets": [
     {
       "binding": "R2",

@@ -7,6 +7,9 @@ declare namespace Cloudflare {
     ASSETS: Fetcher;
     R2: R2Bucket;
     KV: KVNamespace;
+    SEND_EMAIL: SendEmail;
+    SEND_EMAIL_FROM_ADDRESS: string;
+    SEND_EMAIL_FROM_NAME: string;
   }
 }
 interface CloudflareEnv extends Cloudflare.Env {}
