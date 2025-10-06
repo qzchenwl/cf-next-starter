@@ -8,6 +8,7 @@ export const betterAuthOptions: BetterAuthOptions = {
   emailAndPassword: {
     enabled: true,
   },
+  trustedOrigins: ["http://localhost:8787", "*.workers.dev", "*.cwllll.com"],
 };
 
 export async function createAuth(env: CloudflareEnv) {
