@@ -1,6 +1,7 @@
-import { EmailMessage } from "cloudflare:email";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
+
+export const runtime = "edge";
 
 const EMAIL_SUBJECT = "Cloudflare email routing test";
 
@@ -88,6 +89,7 @@ export async function POST(request: Request) {
       bodyLines.join("\n"),
     ].join("\r\n");
 
+  const { EmailMessage } = (await import("cloudflare:email")) as typeof import("cloudflare:email");
   const message = new EmailMessage(fromAddress, email, rawMessage);
 
   try {
