@@ -59,8 +59,6 @@
 		"playwright": "^1.55.1",
 		"storybook": "^9.1.10",
 		"drizzle-kit": "^0.31.5",
-		"eslint": "^9",
-		"eslint-config-next": "15.4.6",
 		"tsx": "^4.19.2",
 		"tailwindcss": "^4",
 		"typescript": "^5",
