@@ -31,4 +31,17 @@ describe('Button', () => {
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+
+  it('renders icon-only buttons with accessible labels', () => {
+    render(
+      <Button size="icon" aria-label="Add item">
+        <span aria-hidden="true">+</span>
+      </Button>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Add item' });
+
+    expect(button).toHaveClass('w-10');
+    expect(button).toHaveAttribute('aria-label', 'Add item');
+  });
 });

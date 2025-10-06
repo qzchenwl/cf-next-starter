@@ -91,7 +91,7 @@ npm run test:coverage # produce an HTML + lcov coverage report
 The configuration loads Testing Library matchers globally and adds Storybook stories as browser-based tests. Coverage output lives in `coverage/`, while CI runs additionally write a JUnit report to `reports/vitest-junit.xml` for workflow summaries.
 
 > [!NOTE]
-> The first time you run the suite locally, execute `npx playwright install chromium` to download the browser binary required by the Storybook Vitest addon.
+> The first time you run the suite locally, execute `npx playwright install --with-deps chromium` to download the headless browser and the Linux dependencies Storybook Test requires.
 
 ## Continuous integration
 
