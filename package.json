@@ -10,7 +10,15 @@
 		"cf:build": "opennextjs-cloudflare build",
 		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
+		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"storybook:test": "storybook test --browsers chromium",
+		"storybook:screenshot": "node scripts/storybook-screenshot.mjs",
+		"test": "vitest --run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest --run --coverage",
+		"test:ci": "vitest --run --reporter=junit --outputFile=./test-results/junit.xml"
 	},
 	"dependencies": {
 		"@opennextjs/cloudflare": "^1.3.0",
@@ -24,14 +32,35 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@storybook/addon-a11y": "^8.6.14",
+		"@storybook/addon-docs": "^8.6.14",
+		"@storybook/addon-interactions": "^8.6.14",
+		"@storybook/addon-links": "^8.6.14",
+		"@storybook/blocks": "^8.6.14",
+		"@storybook/nextjs": "^8.6.14",
+		"@storybook/test": "^8.6.14",
+		"@storybook/testing-library": "^0.2.2",
 		"@tailwindcss/postcss": "^4",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.2.0",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/node": "^20.19.19",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"@vitejs/plugin-react": "^5.0.4",
 		"eslint": "^9",
 		"eslint-config-next": "15.4.6",
+		"jsdom": "^24.1.3",
+		"playwright": "^1.50.1",
+		"storybook": "^8.6.14",
 		"tailwindcss": "^4",
 		"typescript": "^5",
-		"wrangler": "^4.42.0"
+		"vitest": "^2.1.5",
+		"wrangler": "^4.42.0",
+		"@storybook/addon-actions": "^8.6.14",
+		"@storybook/addon-controls": "^8.6.14",
+		"@storybook/addon-backgrounds": "^8.6.14",
+		"@storybook/addon-viewport": "^8.6.14",
+		"@storybook/builder-vite": "^8.6.14"
 	}
 }

@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Lint, test, and Storybook screenshot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report
+          path: test-results/junit.xml
+          if-no-files-found: warn
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build Storybook
+        run: npm run build-storybook -- --quiet
+
+      - name: Capture Storybook screenshot
+        run: npm run storybook:screenshot -- --id=components-button--primary --out=storybook-static/screenshots
+
+      - name: Upload Storybook artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: |
+            storybook-static/screenshots
+            storybook-static/index.html
+            storybook-static/iframe.html
+          if-no-files-found: warn
+
+      - name: Add summary with screenshot
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const core = require('@actions/core');
+            const fs = require('fs');
+            const path = require('path');
+            const screenshotPath = path.join(process.env.GITHUB_WORKSPACE, 'storybook-static', 'screenshots', 'components-button--primary.png');
+            if (!fs.existsSync(screenshotPath)) {
+              core.warning('Storybook screenshot not found. Skipping summary image.');
+              return;
+            }
+            const image = fs.readFileSync(screenshotPath);
+            const encoded = image.toString('base64');
+            core.summary
+              .addHeading('Storybook preview')
+              .addImage(`data:image/png;base64,${encoded}`, 'Primary button story')
+              .write();
+

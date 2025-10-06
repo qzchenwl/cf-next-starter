@@ -78,3 +78,41 @@ npm run deploy
 ```
 
 Refer to the [Cloudflare deployment guide](https://developers.cloudflare.com/workers/wrangler/deploy-projects/) for additional details.
+
+## Storybook & visual reviews
+
+Storybook is configured with the official Next.js framework adapter and Testing Library helpers. Run it locally while building components:
+
+```bash
+npm run storybook
+```
+
+Generate the static build before sharing a preview or capturing UI snapshots:
+
+```bash
+npm run build-storybook
+```
+
+To help reviewers, capture a screenshot of any story (defaults to the primary button example) after building Storybook:
+
+```bash
+npm run storybook:screenshot -- --id=components-button--primary
+```
+
+The command uses Playwright to load the requested story and stores the resulting PNG inside `storybook-static/screenshots/`. Pass a different Story ID with `--id` to document other components. Remember to run `npx playwright install` once locally to download the browser binaries.
+
+## Testing
+
+Component and utility tests run through Vitest with @testing-library/react:
+
+```bash
+npm test          # one-off run
+npm run test:watch
+npm run test:coverage
+```
+
+CI executions call `npm run test:ci`, which writes a JUnit report to `test-results/junit.xml` for workflow uploads.
+
+## Continuous integration
+
+A reusable GitHub Actions workflow (`.github/workflows/ci.yml`) installs dependencies with caching, runs ESLint, executes the Vitest suite, builds Storybook, and captures the latest Storybook screenshot. Test results and screenshots are attached to each workflow run so pull requests always include up-to-date feedback.

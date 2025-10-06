@@ -8,6 +8,11 @@
 
 # testing
 /coverage
+/test-results
+
+# storybook
+/storybook-static
+src/stories/assets/
 
 # next.js
 /.next/
@@ -43,3 +48,4 @@ next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
