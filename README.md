@@ -29,14 +29,16 @@ Drizzle Kit drives schema changes for the D1 database declared in `wrangler.json
 # create SQL from the current schema definitions
 npx drizzle-kit generate
 
-# apply unapplied migrations to the configured database
-npx drizzle-kit migrate
-
 # quickly push an updated schema without creating a migration file
 npx drizzle-kit push
+
+# apply migrations in each environment with Wrangler
+npx wrangler d1 migrations apply cf-next-starter-d1-preview --remote --env preview
+npx wrangler d1 migrations apply cf-next-starter-d1 --remote
+npx wrangler d1 migrations apply cf-next-starter-d1 --local
 ```
 
-Both `npm run deploy` and `npm run preview` trigger `drizzle-kit migrate` automatically via npm pre-scripts (`predeploy` → `precf:deploy` and `prepreview` → `precf:preview`), so the latest migrations are applied before the Worker is published. Use the preview script whenever you want to push through the Cloudflare Versions API:
+Both `npm run deploy` and `npm run preview` trigger the Cloudflare Wrangler migration step automatically via npm pre-scripts (`predeploy` → `precf:deploy` and `prepreview` → `precf:preview`), so the latest migrations are applied before the Worker is published. Use the preview script whenever you want to push through the Cloudflare Versions API:
 
 ```bash
 npm run preview
