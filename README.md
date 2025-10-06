@@ -64,3 +64,13 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - 🛡️ **Type-safe platform bindings** – `cloudflare-env.d.ts` enumerates every Worker binding, keeping runtime configuration transparent and type checked.
 - 📦 **Modern full-stack architecture** – App Router layouts, server actions, and API routes come scaffolded for edge-friendly experiences across regions.
 - 🔁 **CI/CD friendly** – Wrangler-compatible commands, artifact uploads, and typed environment contracts keep your GitHub → Cloudflare workflow smooth and auditable.
+
+## Email Verification via Resend
+
+The Better Auth sample flow ships with mandatory email verification. Configure a Resend account and provide the following environment variables (for local development, place them in `.dev.vars`; for deployments, set them in the Worker binding settings):
+
+- `RESEND_API_KEY` – Required. The API key generated in the Resend dashboard.
+- `RESEND_FROM_EMAIL` – Required. A verified sender email address (for example, `login@yourdomain.com`).
+- `RESEND_FROM_NAME` – Optional. Friendly display name for outgoing messages.
+
+Run `npm run cf-typegen` whenever you add or update bindings so the generated `cloudflare-env.d.ts` stays current.
