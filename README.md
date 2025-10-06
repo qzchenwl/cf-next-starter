@@ -2,14 +2,14 @@ This is a [Next.js](https://nextjs.org) starter tailored for [Cloudflare Workers
 
 ## Getting Started
 
-Install dependencies and run the development server:
+Install dependencies and launch the Cloudflare-local development server:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The landing page now includes a live connectivity check against the provisioned Cloudflare D1 database.
+The script first builds the Worker bundle with `npm run build` (OpenNext is configured to call `npm run next:build` under the hood), then launches `wrangler dev --local` so the Worker is available at [http://localhost:8787](http://localhost:8787). The landing page now includes a live connectivity check against the provisioned Cloudflare D1 database.
 
 You can start editing the UI by modifying `src/app/page.tsx`. API routes live alongside the App Router at `src/app/api/*`.
 
@@ -36,10 +36,10 @@ npx drizzle-kit migrate
 npx drizzle-kit push
 ```
 
-Both `npm run deploy` and `npm run preview` now trigger `drizzle-kit migrate` automatically via npm pre-scripts, so the latest migrations are applied before your Worker bundle is published. When you need to upload a preview build directly through the Cloudflare Versions API, use the helper script that performs the migration first:
+Both `npm run deploy` and `npm run preview` trigger `drizzle-kit migrate` automatically via npm pre-scripts, so the latest migrations are applied before the Worker is published. Use the preview script whenever you want to push through the Cloudflare Versions API:
 
 ```bash
-npm run preview:upload
+npm run preview
 ```
 
 Set `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in the environment running the scripts so Drizzle can authenticate against the target database. Whenever you add new bindings or tables, re-run `npm run cf-typegen` to refresh the strongly-typed environment bindings.
@@ -74,10 +74,10 @@ Remember to run `npm run cf-typegen` after updating the binding name or adding a
 
 ## Deployment
 
-Use Wrangler to build and deploy the Worker bundle:
+Use OpenNext and Wrangler to build and deploy the Worker bundle:
 
 ```bash
-npm run cf:build
+npm run build
 npm run deploy
 ```
 
