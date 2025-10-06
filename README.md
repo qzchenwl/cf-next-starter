@@ -52,7 +52,7 @@ Whenever bindings or secrets change, run `npm run cf-typegen` to refresh `cloudf
 Confirm that Email Routing is configured correctly before shipping features that rely on outbound messages:
 
 1. Enable [Email Routing](https://developers.cloudflare.com/email-routing/get-started/) and verify the destination addresses you plan to test with.
-2. Update the placeholder values for `SEND_EMAIL_FROM_ADDRESS`, `SEND_EMAIL_FROM_NAME`, and the `allowed_sender_addresses` list in `wrangler.jsonc` so they match an approved sender identity.
+2. Update the placeholder values for `SEND_EMAIL_FROM_ADDRESS`, `SEND_EMAIL_FROM_NAME`, and the `allowed_sender_addresses` list in `wrangler.jsonc` (both the root `vars` block and the `env.preview.vars` overrides) so they match an approved sender identity.
 3. Deploy (or run `npm run cf:dev`) and use the **Send a Cloudflare test email** card on the home page to fire a test message. The API route posts to the new `/api/send-email` endpoint, which invokes the `send_email` binding via `env.SEND_EMAIL`.
 
 If the Worker returns an error, inspect the Cloudflare Worker logs to confirm the binding is correctly scoped to your sender and recipient addresses.
