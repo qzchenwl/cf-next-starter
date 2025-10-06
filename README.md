@@ -23,22 +23,26 @@ The project is pre-wired to use the `cf-next-starter-d1` database that was creat
 
 ### Managing migrations
 
-Create a migrations directory and generate your first migration:
+Drizzle Kit drives schema changes for the D1 database declared in `wrangler.jsonc`:
 
 ```bash
-mkdir -p migrations
-wrangler d1 migrations create cf-next-starter-d1 init
+# create SQL from the current schema definitions
+npx drizzle-kit generate
+
+# apply unapplied migrations to the configured database
+npx drizzle-kit migrate
+
+# quickly push an updated schema without creating a migration file
+npx drizzle-kit push
 ```
 
-Apply migrations locally or remotely:
+Both `npm run deploy` and `npm run preview` now trigger `drizzle-kit migrate` automatically via npm pre-scripts, so the latest migrations are applied before your Worker bundle is published. When you need to upload a preview build directly through the Cloudflare Versions API, use the helper script that performs the migration first:
 
 ```bash
-wrangler d1 migrations apply cf-next-starter-d1 --local
-# or deploy to Cloudflare
-wrangler d1 migrations apply cf-next-starter-d1
+npm run preview:upload
 ```
 
-Whenever you add new bindings or tables, re-run `npm run cf-typegen` to refresh the strongly-typed environment bindings.
+Set `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in the environment running the scripts so Drizzle can authenticate against the target database. Whenever you add new bindings or tables, re-run `npm run cf-typegen` to refresh the strongly-typed environment bindings.
 
 ## Cloudflare R2 integration
 
