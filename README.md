@@ -73,4 +73,19 @@ The Better Auth sample flow ships with mandatory email verification. Configure a
 - `RESEND_FROM_EMAIL` – Required. A verified sender email address (for example, `login@yourdomain.com`).
 - `RESEND_FROM_NAME` – Optional. Friendly display name for outgoing messages.
 
+The verification message is implemented as a React email template in [`src/emails/verification-email.tsx`](src/emails/verification-email.tsx), with a Storybook preview under `Emails/VerificationEmail` to make visual tweaks fast.
+
+### Cloudflare environment bindings vs. `process.env`
+
+Cloudflare Workers inject bindings through the `env` argument that surfaces in API routes, middleware, and server actions—**not** `process.env`. That is why the Resend helper receives `env: CloudflareEnv` and reads `env.RESEND_API_KEY`, mirroring the way any Worker binding is accessed at runtime. Node-based tooling (such as `drizzle.config.ts` or Playwright) still uses `process.env` because those scripts execute in your local shell.
+
+Set secrets like `RESEND_API_KEY` with `wrangler secret put RESEND_API_KEY`. Non-secret defaults (for example `RESEND_FROM_EMAIL`) can live in the `vars` block of `wrangler.jsonc`, or you can manage them via the dashboard UI. The starter currently declares D1, R2, and KV bindings in `wrangler.jsonc`; add the Resend values there if you want reproducible previews:
+
+```jsonc
+  "vars": {
+    "RESEND_FROM_EMAIL": "login@example.com",
+    "RESEND_FROM_NAME": "Cloudflare Next Starter"
+  }
+```
+
 Run `npm run cf-typegen` whenever you add or update bindings so the generated `cloudflare-env.d.ts` stays current.

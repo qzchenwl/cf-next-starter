@@ -1,4 +1,7 @@
+import type { ReactElement } from "react";
 import { Resend } from "resend";
+
+import { VerificationEmail } from "@/emails/verification-email";
 
 const DEFAULT_FROM_NAME = "Cloudflare Next Starter";
 
@@ -10,8 +13,9 @@ interface MailRecipient {
 interface MailContent {
   to: MailRecipient;
   subject: string;
-  text: string;
-  html: string;
+  text?: string;
+  html?: string;
+  react?: ReactElement;
   replyTo?: MailRecipient;
 }
 
@@ -59,6 +63,7 @@ async function sendMail(env: CloudflareEnv, message: MailContent) {
     subject: message.subject,
     text: message.text,
     html: message.html,
+    react: message.react,
     reply_to: formatRecipient(replyTo),
   });
 
@@ -86,31 +91,10 @@ export async function deliverVerificationEmail(
     "If you did not create this account you can safely ignore this email.",
   ].join("\n");
 
-  const html = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>${subject}</title>
-  </head>
-  <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.5; color: #0f172a;">
-    <p>Hi ${safeName},</p>
-    <p>Thanks for signing up for <strong>Cloudflare Next Starter</strong>. Please confirm your email address by clicking the button below.</p>
-    <p style="margin: 24px 0;">
-      <a
-        href="${verificationUrl}"
-        style="display: inline-block; padding: 12px 20px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px;"
-      >Verify email address</a>
-    </p>
-    <p>If the button above does not work, copy and paste this link into your browser:</p>
-    <p><a href="${verificationUrl}" style="color: #2563eb;">${verificationUrl}</a></p>
-    <p style="margin-top: 32px;">If you did not create this account you can safely ignore this email.</p>
-  </body>
-</html>`;
-
   await sendMail(env, {
     to,
     subject,
     text,
-    html,
+    react: <VerificationEmail recipientName={safeName} verificationUrl={verificationUrl} />,
   });
 }
