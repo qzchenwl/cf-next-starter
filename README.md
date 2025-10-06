@@ -95,7 +95,7 @@ The configuration loads Testing Library matchers globally and adds Storybook sto
 
 ## Continuous integration
 
-Every push and pull request triggers `.github/workflows/test.yml`. The workflow installs dependencies, lints the project, runs `npm run test:ci` (which includes Storybook-powered tests and coverage), uploads the resulting reports as build artifacts, and annotates pull requests with the Vitest summary.
+Every push and pull request triggers `.github/workflows/test.yml`. The workflow installs dependencies, lints the project, runs `npm run test:ci` (which includes Storybook-powered tests and coverage), and uploads the resulting reports as build artifacts. When the pull request originates from this repository (not a fork), the workflow also annotates the discussion with the Vitest summary.
 
 ## Learn More
 

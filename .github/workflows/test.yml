@@ -44,7 +44,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Annotate pull request with results
-        if: ${{ always() && github.event_name == 'pull_request' }}
+        if: ${{ always() && github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork }}
         uses: dorny/test-reporter@v1
         with:
           name: Vitest
