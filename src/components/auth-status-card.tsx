@@ -148,9 +148,29 @@ export function AuthStatusCard() {
     setIsLoading(false);
   };
 
+  const resolveVerificationEmailTarget = () => {
+    const candidateEmail = status === "logged-in" ? userEmail : emailInput;
+    const normalizedEmail = candidateEmail?.trim();
+
+    if (!normalizedEmail) {
+      setError(
+        status === "logged-in"
+          ? "No email address available to send verification."
+          : "Enter your email address before requesting a verification email.",
+      );
+      return null;
+    }
+
+    if (status !== "logged-in") {
+      setEmailInput(normalizedEmail);
+    }
+
+    return normalizedEmail;
+  };
+
   const handleSendVerificationEmail = async () => {
-    if (!userEmail) {
-      setError("No email address available to send verification.");
+    const targetEmail = resolveVerificationEmailTarget();
+    if (!targetEmail) {
       return;
     }
 
@@ -161,7 +181,7 @@ export function AuthStatusCard() {
     try {
       const { error: verificationError } = await authClient.emailVerification.sendVerificationEmail(
         {
-          email: userEmail,
+          email: targetEmail,
         },
       );
 
@@ -210,6 +230,7 @@ export function AuthStatusCard() {
     ) : null;
 
   const shouldShowVerificationNotice = status === "logged-in" && emailVerified === false;
+  const canRequestVerificationWhileLoggedOut = status === "logged-out";
 
   return (
     <Card className="h-full">
@@ -319,20 +340,37 @@ export function AuthStatusCard() {
           </div>
         ) : (
           <>
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
+              <Button
+                onClick={handleLogin}
+                disabled={isLoading || status === "checking"}
+                className="w-full flex-1 sm:flex-none"
+              >
+                {isLoading && activeAction === "login" ? "Signing in..." : "Sign in"}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleRegister}
+                disabled={isLoading || status === "checking"}
+                className="w-full flex-1 sm:flex-none"
+              >
+                {isLoading && activeAction === "register"
+                  ? "Creating account..."
+                  : "Create account"}
+              </Button>
+            </div>
             <Button
-              onClick={handleLogin}
-              disabled={isLoading || status === "checking"}
-              className="w-full flex-1 sm:flex-none"
+              variant="outline"
+              onClick={handleSendVerificationEmail}
+              disabled={
+                isSendingVerification ||
+                status === "checking" ||
+                !canRequestVerificationWhileLoggedOut ||
+                !emailInput.trim()
+              }
+              className="w-full sm:w-auto"
             >
-              {isLoading && activeAction === "login" ? "Signing in..." : "Sign in"}
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={handleRegister}
-              disabled={isLoading || status === "checking"}
-              className="w-full flex-1 sm:flex-none"
-            >
-              {isLoading && activeAction === "register" ? "Creating account..." : "Create account"}
+              {isSendingVerification ? "Sending email..." : "Resend verification email"}
             </Button>
           </>
         )}
