@@ -5,7 +5,6 @@ import { ArrowUpRight, BookOpenText, Cloud, Workflow } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -14,9 +13,9 @@ import {
 import { cn } from "@/lib/utils";
 
 import { D1StatusCard } from "@/components/d1-status-card";
+import { EmailStatusCard } from "@/components/email-status-card";
 import { KvStatusCard } from "@/components/kv-status-card";
 import { R2StatusCard } from "@/components/r2-status-card";
-import { EmailTestForm } from "@/components/email-test-form";
 
 const resourceLinks = [
   {
@@ -104,24 +103,6 @@ export default function Home() {
           </div>
         </header>
 
-        <section>
-          <Card className="border-dashed border-primary/40 bg-primary/5">
-            <CardHeader className="pb-4">
-              <CardTitle>Send a Cloudflare test email</CardTitle>
-              <CardDescription>
-                Enter a verified destination address to confirm the{" "}
-                <code className="mx-1 rounded bg-muted px-1 py-0.5 text-xs">
-                  send_email
-                </code>{" "}
-                binding is ready.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <EmailTestForm />
-            </CardContent>
-          </Card>
-        </section>
-
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {resourceLinks.map(({ title, description, href, icon: Icon }) => (
             <Card
@@ -157,10 +138,11 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-3">
+        <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <D1StatusCard />
           <R2StatusCard />
           <KvStatusCard />
+          <EmailStatusCard />
         </section>
 
         <footer className="border-t border-border pt-8">
