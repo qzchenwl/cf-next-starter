@@ -36,9 +36,10 @@ export function D1StatusCard() {
       const payload = (await response.json()) as TimestampResponse;
 
       if (!response.ok || !payload.ok || !payload.currentTimestamp) {
-        const message =
-          payload.error ?? `Request failed with status ${response.status}`;
-        throw new Error(message);
+        const message = payload.error ?? `Request failed with status ${response.status}`;
+        setTimestamp(null);
+        setError(message);
+        return;
       }
 
       setTimestamp(payload.currentTimestamp);
@@ -65,8 +66,7 @@ export function D1StatusCard() {
   } else if (timestamp) {
     statusLabel = "Connected";
     statusVariant = "default";
-    statusMessage =
-      "Connected! The database responded with the timestamp below.";
+    statusMessage = "Connected! The database responded with the timestamp below.";
   } else if (error) {
     statusLabel = "Error";
     statusVariant = "destructive";
@@ -87,13 +87,13 @@ export function D1StatusCard() {
         </div>
         <CardDescription>{statusMessage}</CardDescription>
       </CardHeader>
-      {timestamp ? (
-        <CardContent>
+      <CardContent className="flex-1">
+        {timestamp ? (
           <div className="rounded-lg border border-dashed border-border bg-muted/60 p-4 font-mono text-sm">
             {timestamp} (UTC)
           </div>
-        </CardContent>
-      ) : null}
+        ) : null}
+      </CardContent>
       <CardFooter className="justify-end border-t border-border pt-6">
         <Button onClick={handleCheckConnection} disabled={isLoading}>
           {isLoading ? "Checking..." : "Check now"}
