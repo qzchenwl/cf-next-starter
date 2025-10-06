@@ -35,8 +35,6 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 4. **Generate and apply database migrations** – Use Drizzle Kit to keep D1 in sync.
 
    ```bash
-   npx drizzle-kit generate
-   npx drizzle-kit push
    npx wrangler d1 migrations apply cf-next-starter-d1 --remote
    ```
 
@@ -44,7 +42,7 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 
    ```bash
    npm install
-   npm run dev
+   npm run cf:dev
    ```
 
    Whenever bindings or secrets change, run `npm run cf-typegen` to refresh `cloudflare-env.d.ts` for accurate IntelliSense.
