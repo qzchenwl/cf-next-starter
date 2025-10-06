@@ -84,11 +84,10 @@ export async function POST(request: Request) {
     bodyLines.join("\n"),
   ].join("\r\n");
 
-  type EmailModule = typeof import("cloudflare:email");
-  const loadEmailModule = new Function("specifier", "return import(specifier);") as (
-    specifier: string,
-  ) => Promise<EmailModule>;
-  const { EmailMessage } = await loadEmailModule("cloudflare:email");
+  const emailModuleSpecifier = ["cloudflare", "email"].join(":");
+  const { EmailMessage } = (await import(
+    emailModuleSpecifier
+  )) as typeof import("cloudflare:email");
   const message = new EmailMessage(fromAddress, email, rawMessage);
 
   try {
