@@ -36,6 +36,9 @@
       "database_id": "0a0a015b-bb22-4f71-816c-f11af16844c9"
     }
   ],
+  "vars": {
+    "CLOUDFLARE_DATABASE_ID": "0a0a015b-bb22-4f71-816c-f11af16844c9"
+  },
   "observability": {
     "enabled": true
   },
@@ -59,7 +62,10 @@
           "database_name": "cf-next-starter-d1-preview",
           "database_id": "58724aa6-fa82-43fb-8f5a-75b394cb38dd"
         }
-      ]
+      ],
+      "vars": {
+        "CLOUDFLARE_DATABASE_ID": "58724aa6-fa82-43fb-8f5a-75b394cb38dd"
+      }
     }
   }
   /**
