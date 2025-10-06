@@ -54,12 +54,12 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+                href="https://dash.cloudflare.com/?to=/:account/workers-and-pages/create"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(buttonVariants({ size: "lg" }), "sm:w-auto")}
               >
-                Deploy to Vercel
+                Deploy to Cloudflare Workers
               </Link>
               <Link
                 href="https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/"

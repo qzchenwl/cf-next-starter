@@ -20,7 +20,7 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 
 1. **Fork the repository** – Create a GitHub fork so Cloudflare can track your branch builds.
 2. **Import the fork in Cloudflare Dashboard**:
-   - Navigate to **Workers & Pages → Create application → Worker**.
+   - Navigate to **Workers & Pages → Create application → Worker** (or open the account-agnostic shortcut at <https://dash.cloudflare.com/?to=/:account/workers-and-pages/create>).
    - Choose **Connect to Git**, authorize GitHub, and pick your fork.
    - Let the initial build finish so Cloudflare mirrors your `main` branch.
 3. **Provision Cloudflare data services** – Create the bindings and paste the identifiers into `wrangler.jsonc`.
