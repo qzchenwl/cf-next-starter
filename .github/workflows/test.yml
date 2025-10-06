@@ -67,4 +67,4 @@ jobs:
         with:
           name: Playwright
           path: reports/playwright/results.xml
-          reporter: junit
+          reporter: jest-junit
