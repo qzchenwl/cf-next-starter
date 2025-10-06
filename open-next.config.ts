@@ -8,6 +8,9 @@ const config = defineCloudflareConfig({
   // incrementalCache: r2IncrementalCache,
 });
 
+// The Cloudflare builder runs through `npm run cf:build`, which proxies to the OpenNext CLI.
+// Without this override the CLI would call `npm run build` recursively, so we point it to
+// the dedicated Next.js compilation script instead.
 config.buildCommand = "npm run next:build";
 
 export default config;
