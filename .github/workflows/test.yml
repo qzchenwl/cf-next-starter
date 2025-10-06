@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
           cache: npm
 
       - name: Install dependencies
@@ -30,10 +30,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
+      - name: Run unit and Playwright tests
         run: npm run test:ci
 
-      - name: Upload coverage & test report
+      - name: Upload coverage & Vitest report
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -43,10 +43,28 @@ jobs:
             reports/vitest-junit.xml
           if-no-files-found: warn
 
-      - name: Test Report
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            playwright-report
+            reports/playwright/results.xml
+          if-no-files-found: warn
+
+      - name: Vitest Test Report
         uses: dorny/test-reporter@v2
-        if: ${{ !cancelled() }}       # run this step even if previous step failed
+        if: ${{ !cancelled() }} # run this step even if previous step failed
         with:
           name: Vitest
           path: reports/vitest-junit.xml
+          reporter: jest-junit
+
+      - name: Playwright Test Report
+        uses: dorny/test-reporter@v2
+        if: ${{ !cancelled() }}
+        with:
+          name: Playwright
+          path: reports/playwright/results.xml
           reporter: jest-junit
