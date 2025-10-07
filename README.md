@@ -64,3 +64,28 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - 🛡️ **Type-safe platform bindings** – `cloudflare-env.d.ts` enumerates every Worker binding, keeping runtime configuration transparent and type checked.
 - 📦 **Modern full-stack architecture** – App Router layouts, server actions, and API routes come scaffolded for edge-friendly experiences across regions.
 - 🔁 **CI/CD friendly** – Wrangler-compatible commands, artifact uploads, and typed environment contracts keep your GitHub → Cloudflare workflow smooth and auditable.
+
+## Email Verification via Resend
+
+The Better Auth sample flow ships with mandatory email verification. Configure a Resend account and provide the following environment variables (for local development, place them in `.dev.vars`; for deployments, set them in the Worker binding settings):
+
+- `RESEND_API_KEY` – Required. The API key generated in the Resend dashboard.
+- `RESEND_FROM_EMAIL` – Required. A verified sender email address (for example, `login@yourdomain.com`).
+- `RESEND_FROM_NAME` – Optional. Friendly display name for outgoing messages.
+
+The verification message is implemented as a React email template in [`src/emails/verification-email.tsx`](src/emails/verification-email.tsx), with a Storybook preview under `Emails/VerificationEmail` to make visual tweaks fast.
+
+### Cloudflare environment bindings vs. `process.env`
+
+Cloudflare Workers inject bindings through the `env` argument that surfaces in API routes, middleware, and server actions—**not** `process.env`. That is why the Resend helper receives `env: CloudflareEnv` and reads `env.RESEND_API_KEY`, mirroring the way any Worker binding is accessed at runtime. Node-based tooling (such as `drizzle.config.ts` or Playwright) still uses `process.env` because those scripts execute in your local shell.
+
+Set secrets like `RESEND_API_KEY` with `wrangler secret put RESEND_API_KEY`. Non-secret defaults (for example `RESEND_FROM_EMAIL`) can live in the `vars` block of `wrangler.jsonc`, or you can manage them via the dashboard UI. The starter currently declares D1, R2, and KV bindings in `wrangler.jsonc`; add the Resend values there if you want reproducible previews:
+
+```jsonc
+  "vars": {
+    "RESEND_FROM_EMAIL": "login@example.com",
+    "RESEND_FROM_NAME": "Cloudflare Next Starter"
+  }
+```
+
+Run `npm run cf-typegen` whenever you add or update bindings so the generated `cloudflare-env.d.ts` stays current.

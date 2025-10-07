@@ -17,12 +17,14 @@ import {
 export function AuthStatusCard() {
   const [status, setStatus] = useState<"checking" | "logged-in" | "logged-out">("checking");
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeAction, setActiveAction] = useState<"login" | "register" | null>(null);
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [isSendingVerification, setIsSendingVerification] = useState(false);
 
   // Initial session state
   useEffect(() => {
@@ -31,11 +33,13 @@ export function AuthStatusCard() {
       const { data: session } = await authClient.getSession();
       if (session?.user) {
         setUserEmail(session.user.email);
+        setEmailVerified(Boolean(session.user.emailVerified));
         setEmailInput(session.user.email ?? "");
         setPasswordInput("");
         setStatus("logged-in");
       } else {
         setUserEmail(null);
+        setEmailVerified(null);
         setEmailInput("");
         setPasswordInput("");
         setStatus("logged-out");
@@ -60,6 +64,8 @@ export function AuthStatusCard() {
     const { data: session } = await authClient.getSession();
     const nextEmail = session?.user?.email ?? null;
     setUserEmail(nextEmail);
+    const nextVerified = session?.user?.emailVerified;
+    setEmailVerified(nextVerified == null ? null : Boolean(nextVerified));
     setEmailInput(nextEmail ?? fallbackEmail ?? "");
     setStatus(session?.user ? "logged-in" : "logged-out");
   };
@@ -119,7 +125,9 @@ export function AuthStatusCard() {
 
       await refreshSession(credentials.email);
       setPasswordInput("");
-      setInfo("Account created successfully.");
+      setInfo(
+        "Account created successfully. Check your email inbox for a verification link before signing in.",
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -132,11 +140,42 @@ export function AuthStatusCard() {
     setIsLoading(true);
     await authClient.signOut();
     setUserEmail(null);
+    setEmailVerified(null);
     setEmailInput("");
     setPasswordInput("");
     setStatus("logged-out");
     setInfo(null);
     setIsLoading(false);
+  };
+
+  const handleSendVerificationEmail = async () => {
+    if (!userEmail) {
+      setError("No email address available to send verification.");
+      return;
+    }
+
+    setIsSendingVerification(true);
+    setError(null);
+    setInfo(null);
+
+    try {
+      const { error: verificationError } = await authClient.emailVerification.sendVerificationEmail(
+        {
+          email: userEmail,
+        },
+      );
+
+      if (verificationError) {
+        setError(verificationError.message ?? "Unknown error");
+        return;
+      }
+
+      setInfo("Verification email sent. Please check your inbox.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsSendingVerification(false);
+    }
   };
 
   let badgeVariant: BadgeProps["variant"];
@@ -150,12 +189,27 @@ export function AuthStatusCard() {
   } else if (status === "logged-in") {
     badgeLabel = "Logged in";
     badgeVariant = "default";
-    description = `Welcome back, ${userEmail}`;
+    if (emailVerified) {
+      description = `Welcome back, ${userEmail}`;
+    } else {
+      description = `Welcome back, ${userEmail}. Please verify your email address to finish setup.`;
+    }
   } else {
     badgeLabel = "Logged out";
     badgeVariant = "outline";
     description = "You are not logged in yet.";
   }
+
+  const verificationBadge =
+    status === "logged-in" && emailVerified != null ? (
+      emailVerified ? (
+        <Badge variant="secondary">Email verified</Badge>
+      ) : (
+        <Badge variant="destructive">Email not verified</Badge>
+      )
+    ) : null;
+
+  const shouldShowVerificationNotice = status === "logged-in" && emailVerified === false;
 
   return (
     <Card className="h-full">
@@ -167,7 +221,10 @@ export function AuthStatusCard() {
             </span>
             <CardTitle>Better Auth</CardTitle>
           </div>
-          <Badge variant={badgeVariant}>{badgeLabel}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={badgeVariant}>{badgeLabel}</Badge>
+            {verificationBadge}
+          </div>
         </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
@@ -176,6 +233,15 @@ export function AuthStatusCard() {
         <CardContent>
           <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
             {error}
+          </div>
+        </CardContent>
+      )}
+
+      {shouldShowVerificationNotice && (
+        <CardContent>
+          <div className="rounded-md border border-amber-500/40 bg-amber-400/10 p-3 text-sm text-amber-800">
+            Your email address has not been verified yet. Check your inbox for the verification link
+            or resend it below.
           </div>
         </CardContent>
       )}
@@ -236,9 +302,21 @@ export function AuthStatusCard() {
 
       <CardFooter className="flex-wrap gap-3 border-t border-border pt-6">
         {status === "logged-in" ? (
-          <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? "Signing out..." : "Sign out"}
-          </Button>
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
+            <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
+              {isLoading ? "Signing out..." : "Sign out"}
+            </Button>
+            {shouldShowVerificationNotice && (
+              <Button
+                variant="outline"
+                onClick={handleSendVerificationEmail}
+                disabled={isSendingVerification}
+                className="w-full sm:w-auto"
+              >
+                {isSendingVerification ? "Sending email..." : "Resend verification email"}
+              </Button>
+            )}
+          </div>
         ) : (
           <>
             <Button

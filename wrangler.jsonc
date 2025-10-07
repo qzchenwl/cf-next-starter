@@ -29,6 +29,10 @@
       "id": "418b43fc589842d088cc79d412a12222"
     }
   ],
+  "vars": {
+    "RESEND_FROM_EMAIL": "login@example.com",
+    "RESEND_FROM_NAME": "Cloudflare Next Starter"
+  },
   "d1_databases": [
     {
       "binding": "D1",
