@@ -40,6 +40,10 @@
   "observability": {
     "enabled": true
   },
+  "vars": {
+    "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
+    "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter"
+  },
   "env": {
     "preview": {
       "r2_buckets": [
@@ -61,7 +65,11 @@
           "database_id": "58724aa6-fa82-43fb-8f5a-75b394cb38dd",
           "migrations_dir": "drizzle"
         }
-      ]
+      ],
+      "vars": {
+        "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
+        "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter"
+      }
     }
   }
   /**
