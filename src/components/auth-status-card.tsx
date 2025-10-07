@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { User } from 'lucide-react';
+
 import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from '@/components/ui/card';
+import { useTranslations } from '@/lib/translation-provider';
 
 export function AuthStatusCard() {
   const [status, setStatus] = useState<'checking' | 'logged-in' | 'logged-out'>('checking');
@@ -16,6 +18,7 @@ export function AuthStatusCard() {
   const [activeAction, setActiveAction] = useState<'login' | 'register' | null>(null);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const t = useTranslations('statusCards.auth');
 
   // Initial session state
   useEffect(() => {
@@ -42,7 +45,7 @@ export function AuthStatusCard() {
     const password = passwordInput;
 
     if (!normalizedEmail || !password) {
-      setError('Please provide both email and password.');
+      setError(t('errors.missingCredentials'));
       return null;
     }
 
@@ -69,19 +72,19 @@ export function AuthStatusCard() {
     setInfo(null);
     setEmailInput(credentials.email);
     try {
-      const { error } = await authClient.signIn.email({
+      const { error: authError } = await authClient.signIn.email({
         email: credentials.email,
         password: credentials.password,
       });
-      if (error) {
-        setError(error.message ?? 'Unknown error');
+      if (authError) {
+        setError(authError.message ?? t('errors.unknown'));
         return;
       }
       await refreshSession(credentials.email);
       setPasswordInput('');
-      setInfo('Signed in successfully.');
+      setInfo(t('info.signedIn'));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('errors.unknown'));
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -100,21 +103,21 @@ export function AuthStatusCard() {
     setInfo(null);
     setEmailInput(credentials.email);
     try {
-      const { error } = await authClient.signUp.email({
+      const { error: authError } = await authClient.signUp.email({
         name: credentials.email.split('@')[0],
         email: credentials.email,
         password: credentials.password,
       });
-      if (error) {
-        setError(error.message ?? 'Unknown error');
+      if (authError) {
+        setError(authError.message ?? t('errors.unknown'));
         return;
       }
 
       await refreshSession(credentials.email);
       setPasswordInput('');
-      setInfo('Account created successfully.');
+      setInfo(t('info.accountCreated'));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('errors.unknown'));
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -133,21 +136,21 @@ export function AuthStatusCard() {
   };
 
   let badgeVariant: BadgeProps['variant'];
-  let badgeLabel;
-  let description;
+  let badgeLabel: string;
+  let description: string;
 
   if (status === 'checking') {
-    badgeLabel = 'Checking';
+    badgeLabel = t('status.checking');
     badgeVariant = 'secondary';
-    description = 'Checking current login session...';
+    description = t('messages.checking');
   } else if (status === 'logged-in') {
-    badgeLabel = 'Logged in';
+    badgeLabel = t('status.loggedIn');
     badgeVariant = 'default';
-    description = `Welcome back, ${userEmail}`;
+    description = t('messages.loggedIn', { email: userEmail ?? '' });
   } else {
-    badgeLabel = 'Logged out';
+    badgeLabel = t('status.loggedOut');
     badgeVariant = 'outline';
-    description = 'You are not logged in yet.';
+    description = t('messages.loggedOut');
   }
 
   return (
@@ -158,31 +161,31 @@ export function AuthStatusCard() {
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
               <User className="h-5 w-5" />
             </span>
-            <CardTitle>Better Auth</CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
           </div>
           <Badge variant={badgeVariant}>{badgeLabel}</Badge>
         </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
-      {error && (
+      {error ? (
         <CardContent>
           <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
             {error}
           </div>
         </CardContent>
-      )}
+      ) : null}
 
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <label className="block text-sm font-medium" htmlFor="auth-email">
-            Email
+            {t('form.emailLabel')}
           </label>
           <input
             id="auth-email"
             type="email"
             className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="you@example.com"
+            placeholder={t('form.emailPlaceholder')}
             value={emailInput}
             onChange={(event) => {
               setEmailInput(event.target.value);
@@ -199,13 +202,13 @@ export function AuthStatusCard() {
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium" htmlFor="auth-password">
-            Password
+            {t('form.passwordLabel')}
           </label>
           <input
             id="auth-password"
             type="password"
             className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Enter a secure password"
+            placeholder={t('form.passwordPlaceholder')}
             value={passwordInput}
             onChange={(event) => {
               setPasswordInput(event.target.value);
@@ -220,15 +223,15 @@ export function AuthStatusCard() {
             disabled={isLoading || status !== 'logged-out'}
           />
         </div>
-        {info && (
+        {info ? (
           <div className="rounded-md border border-muted bg-muted/20 p-3 text-sm text-muted-foreground">{info}</div>
-        )}
+        ) : null}
       </CardContent>
 
       <CardFooter className="flex-wrap gap-3 border-t border-border pt-6">
         {status === 'logged-in' ? (
           <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? 'Signing out...' : 'Sign out'}
+            {isLoading ? t('actions.signingOut') : t('actions.signOut')}
           </Button>
         ) : (
           <>
@@ -237,7 +240,7 @@ export function AuthStatusCard() {
               disabled={isLoading || status === 'checking'}
               className="w-full flex-1 sm:flex-none"
             >
-              {isLoading && activeAction === 'login' ? 'Signing in...' : 'Sign in'}
+              {isLoading && activeAction === 'login' ? t('actions.signingIn') : t('actions.signIn')}
             </Button>
             <Button
               variant="secondary"
@@ -245,7 +248,7 @@ export function AuthStatusCard() {
               disabled={isLoading || status === 'checking'}
               className="w-full flex-1 sm:flex-none"
             >
-              {isLoading && activeAction === 'register' ? 'Creating account...' : 'Create account'}
+              {isLoading && activeAction === 'register' ? t('actions.creatingAccount') : t('actions.createAccount')}
             </Button>
           </>
         )}

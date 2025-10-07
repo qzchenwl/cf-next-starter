@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "title": "Cloudflare + Next.js 入门项目",
+    "description": "使用 shadcn/ui 仪表盘检查你的 Cloudflare 绑定配置。"
+  },
+  "navigation": {
+    "localeSwitcher": {
+      "label": "语言",
+      "locales": {
+        "en": "English",
+        "zh": "中文（简体）"
+      }
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Cloudflare + Next.js 启动模板",
+      "description": "利用全新的 shadcn/ui 仪表盘检查 Cloudflare 绑定、验证连接并自信发布。",
+      "primaryCta": "部署到 Cloudflare Workers",
+      "secondaryCta": "查看 Cloudflare 指南"
+    },
+    "resources": {
+      "ctaLabel": "查看",
+      "items": [
+        {
+          "id": "workers",
+          "title": "Cloudflare Workers",
+          "description": "使用 Workers 平台将你的 Next.js 应用部署到边缘。",
+          "href": "https://developers.cloudflare.com/workers/"
+        },
+        {
+          "id": "openNext",
+          "title": "面向 Cloudflare 的 OpenNext",
+          "description": "了解 OpenNext 如何为 Next.js 项目构建优化后的 Workers 包。",
+          "href": "https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/"
+        },
+        {
+          "id": "docs",
+          "title": "Next.js 文档",
+          "description": "温习 App Router、服务端组件以及流式 UI。",
+          "href": "https://nextjs.org/docs"
+        }
+      ]
+    },
+    "footer": {
+      "tagline": "基于 Next.js、OpenNext 和 Cloudflare Workers 构建——随时准备下一次部署。",
+      "links": [
+        {
+          "id": "learn",
+          "label": "学习 Next.js",
+          "href": "https://nextjs.org/learn"
+        },
+        {
+          "id": "templates",
+          "label": "浏览模板",
+          "href": "https://vercel.com/templates?framework=next.js"
+        },
+        {
+          "id": "website",
+          "label": "访问 nextjs.org",
+          "href": "https://nextjs.org"
+        }
+      ]
+    }
+  },
+  "statusCards": {
+    "common": {
+      "labels": {
+        "idle": "空闲",
+        "checking": "检查中",
+        "connected": "已连接",
+        "error": "错误"
+      }
+    },
+    "d1": {
+      "title": "Cloudflare D1",
+      "messages": {
+        "idle": "点击按钮即可验证 D1 连接。",
+        "checking": "正在检查数据库连接…",
+        "connected": "连接成功！数据库返回了下面的时间戳。"
+      },
+      "timestampSuffix": "(UTC)",
+      "button": {
+        "default": "立即检查",
+        "loading": "检查中…"
+      },
+      "errors": {
+        "requestFailed": "请求失败，状态码 {{status}}",
+        "network": "读取 D1 失败，请重试。"
+      }
+    },
+    "r2": {
+      "title": "Cloudflare R2",
+      "messages": {
+        "idle": "点击按钮即可列出 R2 存储桶中的部分对象。",
+        "checking": "正在查询 R2 存储桶…",
+        "connectedEmpty": "连接成功！存储桶目前为空。",
+        "connectedCount": "连接成功！显示存储桶中的 {{count}} 个{{countLabel}}。"
+      },
+      "countLabel": {
+        "one": "对象",
+        "other": "对象"
+      },
+      "object": {
+        "size": "{{size}} 字节",
+        "uploaded": "上传时间 {{timestamp}}"
+      },
+      "truncatedNotice": "仅展示前 {{count}} 条数据。可通过前缀或分页获取更多内容。",
+      "button": {
+        "default": "列出对象",
+        "loading": "检查中…"
+      },
+      "errors": {
+        "requestFailed": "请求失败，状态码 {{status}}",
+        "network": "读取 R2 失败，请重试。"
+      }
+    },
+    "kv": {
+      "title": "Cloudflare KV",
+      "messages": {
+        "idle": "点击按钮即可列出 KV 命名空间中的部分键。",
+        "checking": "正在查询 KV 命名空间…",
+        "connectedEmpty": "连接成功！命名空间目前为空。",
+        "connectedCount": "连接成功！显示命名空间中的 {{count}} 个{{countLabel}}。"
+      },
+      "countLabel": {
+        "one": "键",
+        "other": "键"
+      },
+      "truncatedNotice": "仅展示前 {{count}} 条数据。可通过前缀或分页获取更多内容。",
+      "button": {
+        "default": "列出键",
+        "loading": "检查中…"
+      },
+      "errors": {
+        "requestFailed": "请求失败，状态码 {{status}}",
+        "network": "查询 KV 失败，请重试。"
+      }
+    },
+    "auth": {
+      "title": "Better Auth",
+      "status": {
+        "checking": "检查中",
+        "loggedIn": "已登录",
+        "loggedOut": "未登录"
+      },
+      "messages": {
+        "checking": "正在检查当前登录会话…",
+        "loggedIn": "欢迎回来，{{email}}",
+        "loggedOut": "你尚未登录。"
+      },
+      "form": {
+        "emailLabel": "邮箱",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "密码",
+        "passwordPlaceholder": "请输入安全密码"
+      },
+      "info": {
+        "signedIn": "登录成功。",
+        "accountCreated": "账号创建成功。"
+      },
+      "errors": {
+        "missingCredentials": "请填写邮箱和密码。",
+        "unknown": "未知错误"
+      },
+      "actions": {
+        "signOut": "退出登录",
+        "signingOut": "正在退出…",
+        "signIn": "登录",
+        "signingIn": "正在登录…",
+        "createAccount": "创建账号",
+        "creatingAccount": "正在创建账号…"
+      }
+    }
+  }
+}

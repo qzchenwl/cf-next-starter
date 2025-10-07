@@ -6,6 +6,7 @@ import { Boxes } from 'lucide-react';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/lib/translation-provider';
 
 type R2Object = {
   key: string;
@@ -29,6 +30,9 @@ export function R2StatusCard() {
   const [isTruncated, setIsTruncated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations('statusCards.r2');
+  const statusLabels = useTranslations('statusCards.common.labels');
+  const countLabel = useTranslations('statusCards.r2.countLabel');
 
   const handleCheckBucket = async () => {
     setIsLoading(true);
@@ -41,14 +45,14 @@ export function R2StatusCard() {
       const payload = (await response.json()) as R2Response;
 
       if (!response.ok || !payload.ok) {
-        const message = 'error' in payload ? payload.error : `Request failed with status ${response.status}`;
+        const message = 'error' in payload ? payload.error : t('errors.requestFailed', { status: response.status });
         throw new Error(message);
       }
 
       setObjects(payload.objects);
       setIsTruncated(payload.truncated);
     } catch (fetchError) {
-      const message = fetchError instanceof Error ? fetchError.message : 'Failed to read from R2. Please try again.';
+      const message = fetchError instanceof Error ? fetchError.message : t('errors.network');
       setObjects(null);
       setIsTruncated(false);
       setError(message);
@@ -57,26 +61,26 @@ export function R2StatusCard() {
     }
   };
 
-  let statusMessage = 'Click the button to list a few objects from your R2 bucket.';
-  let statusLabel: string = 'Idle';
+  let statusMessage = t('messages.idle');
+  let statusLabel: string = statusLabels('idle');
   let statusVariant: BadgeProps['variant'] = 'outline';
 
   if (isLoading) {
-    statusLabel = 'Checking';
+    statusLabel = statusLabels('checking');
     statusVariant = 'secondary';
-    statusMessage = 'Querying R2 bucket...';
+    statusMessage = t('messages.checking');
   } else if (objects) {
-    statusLabel = 'Connected';
+    statusLabel = statusLabels('connected');
     statusVariant = 'default';
 
     if (objects.length === 0) {
-      statusMessage = 'Connected! The bucket is currently empty.';
+      statusMessage = t('messages.connectedEmpty');
     } else {
-      const countLabel = objects.length === 1 ? 'object' : 'objects';
-      statusMessage = `Connected! Showing ${objects.length} ${countLabel} from the bucket.`;
+      const label = objects.length === 1 ? countLabel('one') : countLabel('other');
+      statusMessage = t('messages.connectedCount', { count: objects.length, countLabel: label });
     }
   } else if (error) {
-    statusLabel = 'Error';
+    statusLabel = statusLabels('error');
     statusVariant = 'destructive';
     statusMessage = error;
   }
@@ -102,22 +106,22 @@ export function R2StatusCard() {
               <li key={object.key} className="rounded-lg border border-border/80 bg-muted/50 p-3">
                 <p className="font-medium text-foreground">{object.key}</p>
                 <p className="text-xs text-muted-foreground">
-                  {object.size} bytes
-                  {object.uploaded ? ` • uploaded ${new Date(object.uploaded).toUTCString()}` : null}
+                  {t('object.size', { size: object.size })}
+                  {object.uploaded
+                    ? ` • ${t('object.uploaded', { timestamp: new Date(object.uploaded).toUTCString() })}`
+                    : null}
                 </p>
               </li>
             ))}
           </ul>
           {isTruncated ? (
-            <p className="text-xs text-muted-foreground">
-              Showing the first {objects.length} items. Add a prefix or pagination to fetch more.
-            </p>
+            <p className="text-xs text-muted-foreground">{t('truncatedNotice', { count: objects.length })}</p>
           ) : null}
         </CardContent>
       ) : null}
       <CardFooter className="justify-end border-t border-border pt-6">
         <Button onClick={handleCheckBucket} disabled={isLoading}>
-          {isLoading ? 'Checking...' : 'List objects'}
+          {isLoading ? t('button.loading') : t('button.default')}
         </Button>
       </CardFooter>
     </Card>

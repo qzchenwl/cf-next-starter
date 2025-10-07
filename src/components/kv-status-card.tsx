@@ -6,6 +6,7 @@ import { KeyRound } from 'lucide-react';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/lib/translation-provider';
 
 type KvKey = {
   name: string;
@@ -41,6 +42,9 @@ export function KvStatusCard() {
   const [isListComplete, setIsListComplete] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations('statusCards.kv');
+  const statusLabels = useTranslations('statusCards.common.labels');
+  const countLabel = useTranslations('statusCards.kv.countLabel');
 
   const handleCheckKv = async () => {
     setIsLoading(true);
@@ -53,14 +57,14 @@ export function KvStatusCard() {
       const payload = (await response.json()) as KvResponse;
 
       if (!response.ok || !payload.ok) {
-        const message = 'error' in payload ? payload.error : `Request failed with status ${response.status}`;
+        const message = 'error' in payload ? payload.error : t('errors.requestFailed', { status: response.status });
         throw new Error(message);
       }
 
       setKeys(payload.keys);
       setIsListComplete(payload.listComplete);
     } catch (fetchError) {
-      const message = fetchError instanceof Error ? fetchError.message : 'Failed to query KV. Please try again.';
+      const message = fetchError instanceof Error ? fetchError.message : t('errors.network');
       setKeys(null);
       setIsListComplete(true);
       setError(message);
@@ -69,26 +73,26 @@ export function KvStatusCard() {
     }
   };
 
-  let statusMessage = 'Click the button to list a few keys from your KV namespace.';
-  let statusLabel: string = 'Idle';
+  let statusMessage = t('messages.idle');
+  let statusLabel: string = statusLabels('idle');
   let statusVariant: BadgeProps['variant'] = 'outline';
 
   if (isLoading) {
-    statusLabel = 'Checking';
+    statusLabel = statusLabels('checking');
     statusVariant = 'secondary';
-    statusMessage = 'Querying KV namespace...';
+    statusMessage = t('messages.checking');
   } else if (keys) {
-    statusLabel = 'Connected';
+    statusLabel = statusLabels('connected');
     statusVariant = 'default';
 
     if (keys.length === 0) {
-      statusMessage = 'Connected! The namespace is currently empty.';
+      statusMessage = t('messages.connectedEmpty');
     } else {
-      const countLabel = keys.length === 1 ? 'key' : 'keys';
-      statusMessage = `Connected! Showing ${keys.length} ${countLabel} from the namespace.`;
+      const label = keys.length === 1 ? countLabel('one') : countLabel('other');
+      statusMessage = t('messages.connectedCount', { count: keys.length, countLabel: label });
     }
   } else if (error) {
-    statusLabel = 'Error';
+    statusLabel = statusLabels('error');
     statusVariant = 'destructive';
     statusMessage = error;
   }
@@ -120,15 +124,13 @@ export function KvStatusCard() {
             ))}
           </ul>
           {!isListComplete ? (
-            <p className="text-xs text-muted-foreground">
-              Showing the first {keys.length} items. Add a prefix or pagination to fetch more.
-            </p>
+            <p className="text-xs text-muted-foreground">{t('truncatedNotice', { count: keys.length })}</p>
           ) : null}
         </CardContent>
       ) : null}
       <CardFooter className="justify-end border-t border-border pt-6">
         <Button onClick={handleCheckKv} disabled={isLoading}>
-          {isLoading ? 'Checking...' : 'List keys'}
+          {isLoading ? t('button.loading') : t('button.default')}
         </Button>
       </CardFooter>
     </Card>

@@ -6,6 +6,7 @@ import { Database } from 'lucide-react';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/lib/translation-provider';
 
 type TimestampResponse = {
   ok: boolean;
@@ -17,6 +18,8 @@ export function D1StatusCard() {
   const [timestamp, setTimestamp] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations('statusCards.d1');
+  const statusLabels = useTranslations('statusCards.common.labels');
 
   const handleCheckConnection = async () => {
     setIsLoading(true);
@@ -29,7 +32,7 @@ export function D1StatusCard() {
       const payload = (await response.json()) as TimestampResponse;
 
       if (!response.ok || !payload.ok || !payload.currentTimestamp) {
-        const message = payload.error ?? `Request failed with status ${response.status}`;
+        const message = payload.error ?? t('errors.requestFailed', { status: response.status });
         setTimestamp(null);
         setError(message);
         return;
@@ -37,7 +40,7 @@ export function D1StatusCard() {
 
       setTimestamp(payload.currentTimestamp);
     } catch (fetchError) {
-      const message = fetchError instanceof Error ? fetchError.message : 'Failed to read from D1. Please try again.';
+      const message = fetchError instanceof Error ? fetchError.message : t('errors.network');
       setTimestamp(null);
       setError(message);
     } finally {
@@ -45,20 +48,20 @@ export function D1StatusCard() {
     }
   };
 
-  let statusMessage = 'Click the button to verify your D1 connection.';
-  let statusLabel: string = 'Idle';
+  let statusMessage = t('messages.idle');
+  let statusLabel: string = statusLabels('idle');
   let statusVariant: BadgeProps['variant'] = 'outline';
 
   if (isLoading) {
-    statusLabel = 'Checking';
+    statusLabel = statusLabels('checking');
     statusVariant = 'secondary';
-    statusMessage = 'Checking database connection...';
+    statusMessage = t('messages.checking');
   } else if (timestamp) {
-    statusLabel = 'Connected';
+    statusLabel = statusLabels('connected');
     statusVariant = 'default';
-    statusMessage = 'Connected! The database responded with the timestamp below.';
+    statusMessage = t('messages.connected');
   } else if (error) {
-    statusLabel = 'Error';
+    statusLabel = statusLabels('error');
     statusVariant = 'destructive';
     statusMessage = error;
   }
@@ -80,13 +83,13 @@ export function D1StatusCard() {
       <CardContent className="flex-1">
         {timestamp ? (
           <div className="rounded-lg border border-dashed border-border bg-muted/60 p-4 font-mono text-sm">
-            {timestamp} (UTC)
+            {timestamp} {t('timestampSuffix')}
           </div>
         ) : null}
       </CardContent>
       <CardFooter className="justify-end border-t border-border pt-6">
         <Button onClick={handleCheckConnection} disabled={isLoading}>
-          {isLoading ? 'Checking...' : 'Check now'}
+          {isLoading ? t('button.loading') : t('button.default')}
         </Button>
       </CardFooter>
     </Card>

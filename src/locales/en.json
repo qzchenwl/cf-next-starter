@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "title": "Cloudflare + Next.js starter",
+    "description": "Check your Cloudflare bindings with a shadcn/ui dashboard."
+  },
+  "navigation": {
+    "localeSwitcher": {
+      "label": "Language",
+      "locales": {
+        "en": "English",
+        "zh": "中文（简体）"
+      }
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Cloudflare + Next.js starter kit",
+      "description": "Inspect your Cloudflare bindings, validate connections, and ship with confidence using a refreshed dashboard powered by shadcn/ui components.",
+      "primaryCta": "Deploy to Cloudflare Workers",
+      "secondaryCta": "View Cloudflare guide"
+    },
+    "resources": {
+      "ctaLabel": "Explore",
+      "items": [
+        {
+          "id": "workers",
+          "title": "Cloudflare Workers",
+          "description": "Deploy your Next.js application to the edge with the Workers platform.",
+          "href": "https://developers.cloudflare.com/workers/"
+        },
+        {
+          "id": "openNext",
+          "title": "OpenNext for Cloudflare",
+          "description": "Learn how OpenNext builds optimized Workers bundles for Next.js projects.",
+          "href": "https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/"
+        },
+        {
+          "id": "docs",
+          "title": "Next.js Documentation",
+          "description": "Brush up on the App Router, server components, and streaming UI.",
+          "href": "https://nextjs.org/docs"
+        }
+      ]
+    },
+    "footer": {
+      "tagline": "Built with Next.js, OpenNext, and Cloudflare Workers — ready for your next deployment.",
+      "links": [
+        {
+          "id": "learn",
+          "label": "Learn Next.js",
+          "href": "https://nextjs.org/learn"
+        },
+        {
+          "id": "templates",
+          "label": "Explore templates",
+          "href": "https://vercel.com/templates?framework=next.js"
+        },
+        {
+          "id": "website",
+          "label": "Visit nextjs.org",
+          "href": "https://nextjs.org"
+        }
+      ]
+    }
+  },
+  "statusCards": {
+    "common": {
+      "labels": {
+        "idle": "Idle",
+        "checking": "Checking",
+        "connected": "Connected",
+        "error": "Error"
+      }
+    },
+    "d1": {
+      "title": "Cloudflare D1",
+      "messages": {
+        "idle": "Click the button to verify your D1 connection.",
+        "checking": "Checking database connection...",
+        "connected": "Connected! The database responded with the timestamp below."
+      },
+      "timestampSuffix": "(UTC)",
+      "button": {
+        "default": "Check now",
+        "loading": "Checking..."
+      },
+      "errors": {
+        "requestFailed": "Request failed with status {{status}}",
+        "network": "Failed to read from D1. Please try again."
+      }
+    },
+    "r2": {
+      "title": "Cloudflare R2",
+      "messages": {
+        "idle": "Click the button to list a few objects from your R2 bucket.",
+        "checking": "Querying R2 bucket...",
+        "connectedEmpty": "Connected! The bucket is currently empty.",
+        "connectedCount": "Connected! Showing {{count}} {{countLabel}} from the bucket."
+      },
+      "countLabel": {
+        "one": "object",
+        "other": "objects"
+      },
+      "object": {
+        "size": "{{size}} bytes",
+        "uploaded": "uploaded {{timestamp}}"
+      },
+      "truncatedNotice": "Showing the first {{count}} items. Add a prefix or pagination to fetch more.",
+      "button": {
+        "default": "List objects",
+        "loading": "Checking..."
+      },
+      "errors": {
+        "requestFailed": "Request failed with status {{status}}",
+        "network": "Failed to read from R2. Please try again."
+      }
+    },
+    "kv": {
+      "title": "Cloudflare KV",
+      "messages": {
+        "idle": "Click the button to list a few keys from your KV namespace.",
+        "checking": "Querying KV namespace...",
+        "connectedEmpty": "Connected! The namespace is currently empty.",
+        "connectedCount": "Connected! Showing {{count}} {{countLabel}} from the namespace."
+      },
+      "countLabel": {
+        "one": "key",
+        "other": "keys"
+      },
+      "truncatedNotice": "Showing the first {{count}} items. Add a prefix or pagination to fetch more.",
+      "button": {
+        "default": "List keys",
+        "loading": "Checking..."
+      },
+      "errors": {
+        "requestFailed": "Request failed with status {{status}}",
+        "network": "Failed to query KV. Please try again."
+      }
+    },
+    "auth": {
+      "title": "Better Auth",
+      "status": {
+        "checking": "Checking",
+        "loggedIn": "Logged in",
+        "loggedOut": "Logged out"
+      },
+      "messages": {
+        "checking": "Checking current login session...",
+        "loggedIn": "Welcome back, {{email}}",
+        "loggedOut": "You are not logged in yet."
+      },
+      "form": {
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter a secure password"
+      },
+      "info": {
+        "signedIn": "Signed in successfully.",
+        "accountCreated": "Account created successfully."
+      },
+      "errors": {
+        "missingCredentials": "Please provide both email and password.",
+        "unknown": "Unknown error"
+      },
+      "actions": {
+        "signOut": "Sign out",
+        "signingOut": "Signing out...",
+        "signIn": "Sign in",
+        "signingIn": "Signing in...",
+        "createAccount": "Create account",
+        "creatingAccount": "Creating account..."
+      }
+    }
+  }
+}
