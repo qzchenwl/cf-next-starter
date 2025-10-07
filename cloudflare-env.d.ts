@@ -7,6 +7,7 @@ declare namespace Cloudflare {
     DEFAULT_EMAIL_FROM_ADDRESS: 'noreply@cwllll.com';
     DEFAULT_EMAIL_FROM_NAME: 'Cloudflare Next Starter';
     BETTER_AUTH_TRUSTED_ORIGINS: 'http://localhost:8787,*.workers.dev,*.cwllll.com';
+    SENTRY_DSN: string;
     R2: R2Bucket;
     D1: D1Database;
     ASSETS: Fetcher;
