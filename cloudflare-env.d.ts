@@ -10,6 +10,10 @@ declare namespace Cloudflare {
     R2: R2Bucket;
     D1: D1Database;
     ASSETS: Fetcher;
+    CF_VERSION_METADATA: WorkerVersionMetadata;
+    SENTRY_DSN?: string;
+    SENTRY_TRACES_SAMPLE_RATE?: string;
+    SENTRY_ENABLE_LOGS?: string;
   }
 }
 interface CloudflareEnv extends Cloudflare.Env {}

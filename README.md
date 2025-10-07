@@ -60,6 +60,13 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 
    Configure Better Auth by setting the `BETTER_AUTH_TRUSTED_ORIGINS` variable in `wrangler.jsonc` (or the Cloudflare dashboard) to a comma-separated list of allowed domains. The Worker falls back to `http://localhost:8787` and `*.workers.dev` when the variable is omitted, which keeps local development frictionless while still letting you tighten origins per environment.
 
+## Observability with Sentry
+
+- The Cloudflare Worker entry point (`worker/index.ts`) is wrapped with `@sentry/cloudflare`, so unhandled exceptions, spans, and optional request logs automatically flow into your Sentry project.
+- Provide the `SENTRY_DSN` variable (secret or plain var) in each environment you want to monitor. Optional tuning is available via `SENTRY_TRACES_SAMPLE_RATE` (float between 0 and 1) and `SENTRY_ENABLE_LOGS` (boolean string such as `true`, `false`, `1`, or `0`).
+- Wrangler is configured with the `CF_VERSION_METADATA` binding and source-map uploads so Sentry can tag events with the active Worker version and resolve stack traces.
+- Deployers can verify their setup by hitting `/api/debug-sentry`, which throws a test error inside a trace span to exercise the integration end-to-end.
+
 ## Automated Quality Gates
 
 GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
