@@ -18,8 +18,6 @@ async function sendEmail(payload: LooseEmailOptions) {
   const { RESEND_API_KEY, DEFAULT_EMAIL_FROM_ADDRESS, DEFAULT_EMAIL_FROM_NAME } = env;
   const from = `${DEFAULT_EMAIL_FROM_NAME} <${DEFAULT_EMAIL_FROM_ADDRESS}>`;
 
-  console.log(env);
-
   const resend = new Resend(RESEND_API_KEY);
   return await resend.emails.send({ from, ...payload });
 }
