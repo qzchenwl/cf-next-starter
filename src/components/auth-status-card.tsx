@@ -1,44 +1,37 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { User } from "lucide-react";
-import { authClient } from "@/lib/auth-client"; // ← Better Auth 客户端
-import { Badge, type BadgeProps } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-  CardContent,
-} from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { User } from 'lucide-react';
+import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
+import { Badge, type BadgeProps } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from '@/components/ui/card';
 
 export function AuthStatusCard() {
-  const [status, setStatus] = useState<"checking" | "logged-in" | "logged-out">("checking");
+  const [status, setStatus] = useState<'checking' | 'logged-in' | 'logged-out'>('checking');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeAction, setActiveAction] = useState<"login" | "register" | null>(null);
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
+  const [activeAction, setActiveAction] = useState<'login' | 'register' | null>(null);
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
 
   // Initial session state
   useEffect(() => {
     const loadSession = async () => {
-      setStatus("checking");
+      setStatus('checking');
       const { data: session } = await authClient.getSession();
       if (session?.user) {
         setUserEmail(session.user.email);
-        setEmailInput(session.user.email ?? "");
-        setPasswordInput("");
-        setStatus("logged-in");
+        setEmailInput(session.user.email ?? '');
+        setPasswordInput('');
+        setStatus('logged-in');
       } else {
         setUserEmail(null);
-        setEmailInput("");
-        setPasswordInput("");
-        setStatus("logged-out");
+        setEmailInput('');
+        setPasswordInput('');
+        setStatus('logged-out');
       }
     };
     void loadSession();
@@ -49,7 +42,7 @@ export function AuthStatusCard() {
     const password = passwordInput;
 
     if (!normalizedEmail || !password) {
-      setError("Please provide both email and password.");
+      setError('Please provide both email and password.');
       return null;
     }
 
@@ -60,8 +53,8 @@ export function AuthStatusCard() {
     const { data: session } = await authClient.getSession();
     const nextEmail = session?.user?.email ?? null;
     setUserEmail(nextEmail);
-    setEmailInput(nextEmail ?? fallbackEmail ?? "");
-    setStatus(session?.user ? "logged-in" : "logged-out");
+    setEmailInput(nextEmail ?? fallbackEmail ?? '');
+    setStatus(session?.user ? 'logged-in' : 'logged-out');
   };
 
   const handleLogin = async () => {
@@ -71,7 +64,7 @@ export function AuthStatusCard() {
     }
 
     setIsLoading(true);
-    setActiveAction("login");
+    setActiveAction('login');
     setError(null);
     setInfo(null);
     setEmailInput(credentials.email);
@@ -81,14 +74,14 @@ export function AuthStatusCard() {
         password: credentials.password,
       });
       if (error) {
-        setError(error.message ?? "Unknown error");
+        setError(error.message ?? 'Unknown error');
         return;
       }
       await refreshSession(credentials.email);
-      setPasswordInput("");
-      setInfo("Signed in successfully.");
+      setPasswordInput('');
+      setInfo('Signed in successfully.');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -102,26 +95,26 @@ export function AuthStatusCard() {
     }
 
     setIsLoading(true);
-    setActiveAction("register");
+    setActiveAction('register');
     setError(null);
     setInfo(null);
     setEmailInput(credentials.email);
     try {
       const { error } = await authClient.signUp.email({
-        name: credentials.email.split("@")[0],
+        name: credentials.email.split('@')[0],
         email: credentials.email,
         password: credentials.password,
       });
       if (error) {
-        setError(error.message ?? "Unknown error");
+        setError(error.message ?? 'Unknown error');
         return;
       }
 
       await refreshSession(credentials.email);
-      setPasswordInput("");
-      setInfo("Account created successfully.");
+      setPasswordInput('');
+      setInfo('Account created successfully.');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -132,29 +125,29 @@ export function AuthStatusCard() {
     setIsLoading(true);
     await authClient.signOut();
     setUserEmail(null);
-    setEmailInput("");
-    setPasswordInput("");
-    setStatus("logged-out");
+    setEmailInput('');
+    setPasswordInput('');
+    setStatus('logged-out');
     setInfo(null);
     setIsLoading(false);
   };
 
-  let badgeVariant: BadgeProps["variant"];
+  let badgeVariant: BadgeProps['variant'];
   let badgeLabel;
   let description;
 
-  if (status === "checking") {
-    badgeLabel = "Checking";
-    badgeVariant = "secondary";
-    description = "Checking current login session...";
-  } else if (status === "logged-in") {
-    badgeLabel = "Logged in";
-    badgeVariant = "default";
+  if (status === 'checking') {
+    badgeLabel = 'Checking';
+    badgeVariant = 'secondary';
+    description = 'Checking current login session...';
+  } else if (status === 'logged-in') {
+    badgeLabel = 'Logged in';
+    badgeVariant = 'default';
     description = `Welcome back, ${userEmail}`;
   } else {
-    badgeLabel = "Logged out";
-    badgeVariant = "outline";
-    description = "You are not logged in yet.";
+    badgeLabel = 'Logged out';
+    badgeVariant = 'outline';
+    description = 'You are not logged in yet.';
   }
 
   return (
@@ -201,7 +194,7 @@ export function AuthStatusCard() {
               }
             }}
             autoComplete="email"
-            disabled={isLoading || status !== "logged-out"}
+            disabled={isLoading || status !== 'logged-out'}
           />
         </div>
         <div className="space-y-2">
@@ -223,38 +216,36 @@ export function AuthStatusCard() {
                 setInfo(null);
               }
             }}
-            autoComplete={status === "logged-in" ? "off" : "current-password"}
-            disabled={isLoading || status !== "logged-out"}
+            autoComplete={status === 'logged-in' ? 'off' : 'current-password'}
+            disabled={isLoading || status !== 'logged-out'}
           />
         </div>
         {info && (
-          <div className="rounded-md border border-muted bg-muted/20 p-3 text-sm text-muted-foreground">
-            {info}
-          </div>
+          <div className="rounded-md border border-muted bg-muted/20 p-3 text-sm text-muted-foreground">{info}</div>
         )}
       </CardContent>
 
       <CardFooter className="flex-wrap gap-3 border-t border-border pt-6">
-        {status === "logged-in" ? (
+        {status === 'logged-in' ? (
           <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? "Signing out..." : "Sign out"}
+            {isLoading ? 'Signing out...' : 'Sign out'}
           </Button>
         ) : (
           <>
             <Button
               onClick={handleLogin}
-              disabled={isLoading || status === "checking"}
+              disabled={isLoading || status === 'checking'}
               className="w-full flex-1 sm:flex-none"
             >
-              {isLoading && activeAction === "login" ? "Signing in..." : "Sign in"}
+              {isLoading && activeAction === 'login' ? 'Signing in...' : 'Sign in'}
             </Button>
             <Button
               variant="secondary"
               onClick={handleRegister}
-              disabled={isLoading || status === "checking"}
+              disabled={isLoading || status === 'checking'}
               className="w-full flex-1 sm:flex-none"
             >
-              {isLoading && activeAction === "register" ? "Creating account..." : "Create account"}
+              {isLoading && activeAction === 'register' ? 'Creating account...' : 'Create account'}
             </Button>
           </>
         )}

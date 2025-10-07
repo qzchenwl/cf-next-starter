@@ -1,5 +1,5 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { NextResponse } from "next/server";
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { NextResponse } from 'next/server';
 
 type KvKeyInfo = {
   name: string;
@@ -35,8 +35,8 @@ export async function GET() {
 
     return NextResponse.json(payload);
   } catch (error) {
-    console.error("Failed to query KV", error);
-    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error('Failed to query KV', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     const payload: KvListResponse = {
       ok: false,

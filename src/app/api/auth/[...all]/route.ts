@@ -1,7 +1,7 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { toNextJsHandler } from "better-auth/next-js";
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { toNextJsHandler } from 'better-auth/next-js';
 
-import { createAuth } from "@/lib/auth";
+import { createAuth } from '@/lib/auth';
 
 async function handle(request: Request) {
   const { env } = await getCloudflareContext({ async: true });
