@@ -6,11 +6,8 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
   return Number.isFinite(parsed) ? parsed : defaultValue;
 }
 
-const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN;
-const tracesSampleRate = parseSampleRate(
-  process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE ?? process.env.SENTRY_TRACES_SAMPLE_RATE,
-  0,
-);
+const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+const tracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 0);
 const replaysSessionSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_REPLAYS_SESSION_SAMPLE_RATE, 0);
 const replaysOnErrorSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE, 1);
 
@@ -23,7 +20,7 @@ if ((replaysSessionSampleRate > 0 || replaysOnErrorSampleRate > 0) && typeof Sen
 Sentry.init({
   dsn,
   enabled: Boolean(dsn),
-  environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
+  environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV,
   tracesSampleRate,
   replaysSessionSampleRate,
   replaysOnErrorSampleRate,

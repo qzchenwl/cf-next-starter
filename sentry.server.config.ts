@@ -6,14 +6,15 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
   return Number.isFinite(parsed) ? parsed : defaultValue;
 }
 
-const dsn = process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN;
-const tracesSampleRate = parseSampleRate(process.env.SENTRY_TRACES_SAMPLE_RATE, 0);
-const profilesSampleRate = parseSampleRate(process.env.SENTRY_PROFILES_SAMPLE_RATE, 0);
+const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+const tracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 0);
+const profilesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_PROFILES_SAMPLE_RATE, 0);
+const environment = process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV;
 
 Sentry.init({
   dsn,
   enabled: Boolean(dsn),
-  environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
+  environment,
   tracesSampleRate,
   profilesSampleRate,
 });

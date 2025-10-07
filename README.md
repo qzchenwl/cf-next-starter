@@ -78,8 +78,8 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 ## Observability with Sentry
 
 - `@sentry/nextjs` powers browser, edge, and server instrumentation. Configuration lives in `sentry.*.config.ts` with an App Router `instrumentation.ts` hook so traces and errors capture Cloudflare worker requests automatically.
-- Set `SENTRY_DSN` (and optionally `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_PROFILES_SAMPLE_RATE`) in Wrangler or the Cloudflare dashboard for runtime sampling control. Expose the DSN to the browser with a matching `NEXT_PUBLIC_SENTRY_DSN` build-time variable.
-- Provide a `SENTRY_AUTH_TOKEN` secret for build pipelines so `withSentryConfig` can upload source maps during `next build` / `opennextjs-cloudflare build`. You can also export `SENTRY_ORG` and `SENTRY_PROJECT` if you override the defaults defined in `sentry.config.ts`.
+- Provide build-time `NEXT_PUBLIC_SENTRY_*` variables (DSN, environment name, sampling rates) so both the browser bundle and the Cloudflare Worker share consistent settings.
+- Provide a `SENTRY_AUTH_TOKEN` secret for build pipelines so `withSentryConfig` can upload source maps during `next build` / `opennextjs-cloudflare build`.
 - For Cloudflare Workers, remember that environment variables resolve at build time for browser bundles and at runtime for worker code. Use Wrangler deployment variables when you need per-environment DSNs or sampling rates.
 
 ## Feature Highlights
