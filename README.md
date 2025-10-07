@@ -75,6 +75,13 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - **Prettier + ESLint autofix** integrations keep JavaScript, TypeScript, Markdown, and stylesheets consistently formatted across the codebase.
 - **Commitizen with cz-git adapter** (`npm run commit`) guides contributors through conventional commit messages that satisfy the commit linting rules and produce clear history.
 
+## Observability with Sentry
+
+- `@sentry/nextjs` powers browser, edge, and server instrumentation. Configuration lives in `sentry.*.config.ts` with an App Router `instrumentation.ts` hook so traces and errors capture Cloudflare worker requests automatically.
+- Set `SENTRY_DSN` (and optionally `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_PROFILES_SAMPLE_RATE`) in Wrangler or the Cloudflare dashboard for runtime sampling control. Expose the DSN to the browser with a matching `NEXT_PUBLIC_SENTRY_DSN` build-time variable.
+- Provide a `SENTRY_AUTH_TOKEN` secret for build pipelines so `withSentryConfig` can upload source maps during `next build` / `opennextjs-cloudflare build`. You can also export `SENTRY_ORG` and `SENTRY_PROJECT` if you override the defaults defined in `sentry.config.ts`.
+- For Cloudflare Workers, remember that environment variables resolve at build time for browser bundles and at runtime for worker code. Use Wrangler deployment variables when you need per-environment DSNs or sampling rates.
+
 ## Feature Highlights
 
 - 🚀 **Cloudflare-native deployment flow** – `npm run preview` and `npm run deploy` orchestrate the OpenNext build, worker upload, and migrations end-to-end.
