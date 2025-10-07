@@ -36,6 +36,7 @@ export default withSentryConfig(nextConfig, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
+  dryRun: !process.env.SENTRY_AUTH_TOKEN,
 });
 
 // added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`
