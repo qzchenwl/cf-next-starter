@@ -47,6 +47,8 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 
    Whenever bindings or secrets change, run `npm run cf-typegen` to refresh `cloudflare-env.d.ts` for accurate IntelliSense.
 
+   Configure Better Auth by setting the `BETTER_AUTH_TRUSTED_ORIGINS` variable in `wrangler.jsonc` (or the Cloudflare dashboard) to a comma-separated list of allowed domains. The Worker falls back to `http://localhost:8787` and `*.workers.dev` when the variable is omitted, which keeps local development frictionless while still letting you tighten origins per environment.
+
 ## Automated Quality Gates
 
 GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:

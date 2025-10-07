@@ -42,7 +42,8 @@
   },
   "vars": {
     "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
-    "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter"
+    "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter",
+    "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com"
   },
   "env": {
     "preview": {
@@ -68,7 +69,8 @@
       ],
       "vars": {
         "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
-        "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter"
+        "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter",
+        "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com"
       }
     }
   }
