@@ -73,56 +73,23 @@ export function SentryStatusCard() {
     setBackendCaptured(false);
     setFrontendEventId(null);
 
-    try {
-      let didTriggerBackendError = false;
+    await Sentry.startSpan(
+      {
+        name: 'Example Frontend/Backend Span',
+        op: 'test',
+      },
+      async () => {
+        const response = await fetch('/api/sentry-example-api', {
+          cache: 'no-store',
+        });
 
-      await Sentry.startSpan(
-        {
-          name: 'Example Frontend/Backend Span',
-          op: 'test',
-        },
-        async () => {
-          const response = await fetch('/api/sentry-example-api', {
-            cache: 'no-store',
-          });
+        if (!response.ok) {
+          return;
+        }
 
-          if (!response.ok) {
-            didTriggerBackendError = true;
-            return;
-          }
-
-          throw new Error('Expected a 500 response from the sample API route, but it succeeded.');
-        },
-      );
-
-      const frontendError = new SentryExampleFrontendError(
-        'This error is raised on the frontend of the Sentry sample card.',
-      );
-      const eventId = Sentry.captureException(frontendError);
-
-      if ('flush' in Sentry && typeof Sentry.flush === 'function') {
-        await Sentry.flush(2000);
-      }
-
-      setBackendCaptured(didTriggerBackendError);
-      setFrontendEventId(eventId ?? null);
-      setEventSent(true);
-      setStatusMessage(
-        didTriggerBackendError
-          ? 'Sample backend exception triggered. A frontend error has also been dispatched to Sentry.'
-          : 'Frontend sample error sent. The API did not return 500, so confirm your server instrumentation.',
-      );
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Failed to send the sample error. Confirm your Sentry DSN and try again.';
-      setEventError(message);
-      setStatus('error');
-      setStatusMessage(message);
-    } finally {
-      setIsSending(false);
-    }
+        throw new Error('Expected a 500 response from the sample API route, but it succeeded.');
+      },
+    );
   };
 
   let statusLabel: string = 'Idle';
