@@ -16,6 +16,7 @@ export function AuthStatusCard() {
   const [activeAction, setActiveAction] = useState<'login' | 'register' | null>(null);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
 
   // Initial session state
   useEffect(() => {
@@ -26,11 +27,13 @@ export function AuthStatusCard() {
         setUserEmail(session.user.email);
         setEmailInput(session.user.email ?? '');
         setPasswordInput('');
+        setIsEmailVerified(Boolean(session.user.emailVerified));
         setStatus('logged-in');
       } else {
         setUserEmail(null);
         setEmailInput('');
         setPasswordInput('');
+        setIsEmailVerified(null);
         setStatus('logged-out');
       }
     };
@@ -54,6 +57,7 @@ export function AuthStatusCard() {
     const nextEmail = session?.user?.email ?? null;
     setUserEmail(nextEmail);
     setEmailInput(nextEmail ?? fallbackEmail ?? '');
+    setIsEmailVerified(session?.user ? Boolean(session.user.emailVerified) : null);
     setStatus(session?.user ? 'logged-in' : 'logged-out');
   };
 
@@ -128,6 +132,7 @@ export function AuthStatusCard() {
     setEmailInput('');
     setPasswordInput('');
     setStatus('logged-out');
+    setIsEmailVerified(null);
     setInfo(null);
     setIsLoading(false);
   };
@@ -135,6 +140,15 @@ export function AuthStatusCard() {
   let badgeVariant: BadgeProps['variant'];
   let badgeLabel;
   let description;
+  let verificationMessage: string | null = null;
+
+  const showVerification = status === 'logged-in' && isEmailVerified !== null;
+  const verificationBadgeVariant: BadgeProps['variant'] = 'outline';
+  const verificationBadgeClassName =
+    isEmailVerified === true
+      ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-200'
+      : 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-200';
+  const verificationBadgeLabel = isEmailVerified === true ? 'Email verified' : 'Verification pending';
 
   if (status === 'checking') {
     badgeLabel = 'Checking';
@@ -144,25 +158,38 @@ export function AuthStatusCard() {
     badgeLabel = 'Logged in';
     badgeVariant = 'default';
     description = `Welcome back, ${userEmail}`;
+    verificationMessage =
+      isEmailVerified === true
+        ? 'Your email address has been verified. All features are unlocked.'
+        : 'We sent a verification email when you signed up. Please complete it to unlock all features.';
   } else {
     badgeLabel = 'Logged out';
     badgeVariant = 'outline';
     description = 'You are not logged in yet.';
+    verificationMessage = null;
   }
 
   return (
     <Card className="h-full">
       <CardHeader className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
               <User className="h-5 w-5" />
             </span>
             <CardTitle>Better Auth</CardTitle>
           </div>
-          <Badge variant={badgeVariant}>{badgeLabel}</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={badgeVariant}>{badgeLabel}</Badge>
+            {showVerification ? (
+              <Badge className={verificationBadgeClassName} variant={verificationBadgeVariant}>
+                {verificationBadgeLabel}
+              </Badge>
+            ) : null}
+          </div>
         </div>
         <CardDescription>{description}</CardDescription>
+        {verificationMessage ? <p className="text-sm text-muted-foreground">{verificationMessage}</p> : null}
       </CardHeader>
 
       {error && (
