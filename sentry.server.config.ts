@@ -4,11 +4,19 @@
 
 import * as Sentry from '@sentry/nextjs';
 
+function parseSampleRate(value: string | undefined, defaultValue: number): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : defaultValue;
+}
+
+const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+const sentryTracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 1);
+
 Sentry.init({
-  dsn: 'https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368',
+  dsn: sentryDsn,
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: sentryTracesSampleRate,
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
