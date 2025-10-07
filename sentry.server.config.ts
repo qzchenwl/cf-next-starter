@@ -12,6 +12,8 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 const sentryTracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 1);
 
+console.log({ sentryDsn });
+
 Sentry.init({
   dsn: sentryDsn,
 

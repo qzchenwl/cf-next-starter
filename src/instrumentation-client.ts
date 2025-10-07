@@ -21,6 +21,8 @@ if (sentryReplaysSessionSampleRate > 0 || sentryReplaysOnErrorSampleRate > 0) {
   sentryIntegrations.push(Sentry.replayIntegration());
 }
 
+console.log({ sentryDsn });
+
 Sentry.init({
   dsn: sentryDsn,
 
