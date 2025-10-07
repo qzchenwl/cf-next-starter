@@ -1,7 +1,8 @@
 import { type User } from 'better-auth';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { CreateEmailOptions, RequireAtLeastOne, Resend } from 'resend';
-import { ReactNode } from 'react';
+import { Resend } from 'resend';
+import type { CreateEmailOptions, RequireAtLeastOne } from 'resend';
+import type { ReactNode } from 'react';
 import VerificationEmail from '@/components/verification-email';
 
 interface EmailRenderOptions {
