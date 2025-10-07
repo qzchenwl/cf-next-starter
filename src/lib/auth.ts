@@ -18,6 +18,7 @@ export const betterAuthOptions: BetterAuthOptions = {
 
 export async function createAuth(env: CloudflareEnv) {
   return betterAuth({
+    secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(drizzleD1(env.D1, { schema: authSchema }), {
       provider: 'sqlite',
       schema: authSchema,
