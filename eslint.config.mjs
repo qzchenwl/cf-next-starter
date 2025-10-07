@@ -14,7 +14,17 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  ...storybook.configs["flat/recommended"]
+  ...storybook.configs["flat/recommended"],
+  {
+    ignores: [".open-next/**", ".next/**", "dist/**", "build/**", "cloudflare-env.d.ts"],
+  },
+  {
+    files: ["**/*.d.ts"],
+    rules: {
+      "no-unused-vars": "off",
+      "no-redeclare": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
