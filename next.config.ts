@@ -38,7 +38,8 @@ export default withSentryConfig(nextConfig, {
 
   release: {
     setCommits: {
-      auto: true,
+      commit: process.env.WORKERS_CI_COMMIT_SHA ?? '',
+      repo: 'qzchenwl/cf-next-starter',
     },
   },
 });
