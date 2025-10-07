@@ -1,8 +1,13 @@
 'use client';
 
-import Head from 'next/head';
+import type { Metadata } from 'next';
 import * as Sentry from '@sentry/nextjs';
 import { useState, useEffect } from 'react';
+
+export const metadata: Metadata = {
+  title: 'sentry-example-page',
+  description: 'Test Sentry for your Next.js app!',
+};
 
 class SentryExampleFrontendError extends Error {
   constructor(message: string | undefined) {
@@ -25,11 +30,6 @@ export default function Page() {
 
   return (
     <div>
-      <Head>
-        <title>sentry-example-page</title>
-        <meta name="description" content="Test Sentry for your Next.js app!" />
-      </Head>
-
       <main>
         <div className="flex-spacer" />
         <svg height="40" width="40" fill="none" xmlns="http://www.w3.org/2000/svg">
