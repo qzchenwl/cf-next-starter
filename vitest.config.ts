@@ -5,8 +5,7 @@ import { defineConfig } from 'vitest/config';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
-const dirname =
-  typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 const isCI = process.env.CI === 'true';
 
@@ -14,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(dirname, 'src'),
+      '@react-email/render': path.resolve(dirname, 'node_modules/@react-email/render/dist/node/index.mjs'),
     },
   },
   test: {
