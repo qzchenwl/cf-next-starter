@@ -1,18 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Database } from "lucide-react";
+import { useState } from 'react';
+import { Database } from 'lucide-react';
 
-import { Badge, type BadgeProps } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Badge, type BadgeProps } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 type TimestampResponse = {
   ok: boolean;
@@ -30,8 +23,8 @@ export function D1StatusCard() {
     setError(null);
 
     try {
-      const response = await fetch("/api/d1", {
-        cache: "no-store",
+      const response = await fetch('/api/d1', {
+        cache: 'no-store',
       });
       const payload = (await response.json()) as TimestampResponse;
 
@@ -44,10 +37,7 @@ export function D1StatusCard() {
 
       setTimestamp(payload.currentTimestamp);
     } catch (fetchError) {
-      const message =
-        fetchError instanceof Error
-          ? fetchError.message
-          : "Failed to read from D1. Please try again.";
+      const message = fetchError instanceof Error ? fetchError.message : 'Failed to read from D1. Please try again.';
       setTimestamp(null);
       setError(message);
     } finally {
@@ -55,21 +45,21 @@ export function D1StatusCard() {
     }
   };
 
-  let statusMessage = "Click the button to verify your D1 connection.";
-  let statusLabel: string = "Idle";
-  let statusVariant: BadgeProps["variant"] = "outline";
+  let statusMessage = 'Click the button to verify your D1 connection.';
+  let statusLabel: string = 'Idle';
+  let statusVariant: BadgeProps['variant'] = 'outline';
 
   if (isLoading) {
-    statusLabel = "Checking";
-    statusVariant = "secondary";
-    statusMessage = "Checking database connection...";
+    statusLabel = 'Checking';
+    statusVariant = 'secondary';
+    statusMessage = 'Checking database connection...';
   } else if (timestamp) {
-    statusLabel = "Connected";
-    statusVariant = "default";
-    statusMessage = "Connected! The database responded with the timestamp below.";
+    statusLabel = 'Connected';
+    statusVariant = 'default';
+    statusMessage = 'Connected! The database responded with the timestamp below.';
   } else if (error) {
-    statusLabel = "Error";
-    statusVariant = "destructive";
+    statusLabel = 'Error';
+    statusVariant = 'destructive';
     statusMessage = error;
   }
 
@@ -96,7 +86,7 @@ export function D1StatusCard() {
       </CardContent>
       <CardFooter className="justify-end border-t border-border pt-6">
         <Button onClick={handleCheckConnection} disabled={isLoading}>
-          {isLoading ? "Checking..." : "Check now"}
+          {isLoading ? 'Checking...' : 'Check now'}
         </Button>
       </CardFooter>
     </Card>

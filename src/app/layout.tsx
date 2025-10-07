@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/lib/utils";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import { cn } from '@/lib/utils';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Cloudflare + Next.js starter",
-  description: "Check your Cloudflare bindings with a shadcn/ui dashboard.",
+  title: 'Cloudflare + Next.js starter',
+  description: 'Check your Cloudflare bindings with a shadcn/ui dashboard.',
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans text-foreground antialiased",
+          'min-h-screen bg-background font-sans text-foreground antialiased',
           geistSans.variable,
           geistMono.variable,
         )}
