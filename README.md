@@ -79,7 +79,7 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 
 - `@sentry/nextjs` powers browser, edge, and server instrumentation. Configuration lives in `sentry.*.config.ts` with an App Router `instrumentation.ts` hook so traces and errors capture Cloudflare worker requests automatically.
 - Provide build-time `NEXT_PUBLIC_SENTRY_*` variables (DSN, environment name, sampling rates) so both the browser bundle and the Cloudflare Worker share consistent settings.
-- Provide a `SENTRY_AUTH_TOKEN` secret for build pipelines so `withSentryConfig` can upload source maps during `next build` / `opennextjs-cloudflare build`.
+- Provide `SENTRY_ORG`, `SENTRY_PROJECT`, and a `SENTRY_AUTH_TOKEN` secret for build pipelines so `withSentryConfig` can upload source maps during `next build` / `opennextjs-cloudflare build`.
 - For Cloudflare Workers, remember that environment variables resolve at build time for browser bundles and at runtime for worker code. Use Wrangler deployment variables when you need per-environment DSNs or sampling rates.
 
 ## Feature Highlights

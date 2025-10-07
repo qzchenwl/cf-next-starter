@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import { replayIntegration } from '@sentry/nextjs';
 
 function parseSampleRate(value: string | undefined, defaultValue: number): number {
   const parsed = Number(value);
@@ -13,8 +14,9 @@ const replaysOnErrorSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_
 
 const integrations: Sentry.Integration[] = [];
 
-if ((replaysSessionSampleRate > 0 || replaysOnErrorSampleRate > 0) && typeof Sentry.replayIntegration === 'function') {
-  integrations.push(Sentry.replayIntegration());
+if (replaysSessionSampleRate > 0 || replaysOnErrorSampleRate > 0) {
+  // `replayIntegration` ships with `@sentry/nextjs`, so no extra replay package is required.
+  integrations.push(replayIntegration());
 }
 
 Sentry.init({
