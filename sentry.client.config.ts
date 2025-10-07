@@ -8,7 +8,7 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
 }
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
-const tracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 0);
+const tracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 1);
 const replaysSessionSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_REPLAYS_SESSION_SAMPLE_RATE, 0);
 const replaysOnErrorSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE, 1);
 

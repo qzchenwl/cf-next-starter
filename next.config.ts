@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
 
 const sentryOrg = process.env.SENTRY_ORG ?? process.env.NEXT_PUBLIC_SENTRY_ORG;
 const sentryProject = process.env.SENTRY_PROJECT ?? process.env.NEXT_PUBLIC_SENTRY_PROJECT;
+// The auth token must remain private; exposing a NEXT_PUBLIC variant would leak it to the browser bundle.
 const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
 const shouldUploadSourceMaps = Boolean(sentryOrg && sentryProject && sentryAuthToken);
 

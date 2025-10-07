@@ -7,8 +7,8 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
 }
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
-const tracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 0);
-const profilesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_PROFILES_SAMPLE_RATE, 0);
+const tracesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE, 1);
+const profilesSampleRate = parseSampleRate(process.env.NEXT_PUBLIC_SENTRY_PROFILES_SAMPLE_RATE, 1);
 const environment = process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV;
 
 Sentry.init({
