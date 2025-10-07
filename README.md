@@ -73,5 +73,5 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - 🧰 **Productivity tooling included** – Storybook, Vitest, ESLint, and Playwright ship preconfigured so teams can focus on product velocity.
 - 🛡️ **Type-safe platform bindings** – `cloudflare-env.d.ts` enumerates every Worker binding, keeping runtime configuration transparent and type checked.
 - 📦 **Modern full-stack architecture** – App Router layouts, server actions, and API routes come scaffolded for edge-friendly experiences across regions.
-- 🔐 **Turnkey auth flows** – Better Auth route handlers, D1-backed session storage, and verification emails rendered with React Email ship ready to customize.
+- 🔐 **Better Auth flows** – Route handlers, D1-backed session storage, and verification emails rendered with React Email ship ready to customize.
 - 🔁 **CI/CD friendly** – Wrangler-compatible commands, artifact uploads, and typed environment contracts keep your GitHub → Cloudflare workflow smooth and auditable.
