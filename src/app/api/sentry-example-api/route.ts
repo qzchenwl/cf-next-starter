@@ -14,6 +14,7 @@ export function GET() {
 
   console.log('SentryExampleAPIError');
   Sentry.withScope((scope) => {
+    scope.setLevel('error');
     Sentry.captureException(error);
   });
 
