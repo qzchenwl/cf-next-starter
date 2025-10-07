@@ -12,7 +12,9 @@ Everything you need for a modern full-stack experience comes prewired:
 - **OpenNext build pipeline** tuned for Wrangler so Workers deployments and previews mirror production.
 - **Cloudflare bindings** for D1, R2, and KV declared in `wrangler.jsonc` with matching types in `cloudflare-env.d.ts`.
 - **Drizzle ORM** plus schema-first migrations to keep SQL changes predictable and traceable.
+- **Better Auth with React Email** wiring for password sign-in, session storage on D1, and transactional templates rendered with Resend-ready components.
 - **Storybook workspace** for component-driven development and visual QA.
+- **Automated code hygiene** enforced with Prettier, ESLint, lint-staged, and Lefthook-managed Git hooks plus Commitizen prompts.
 
 ## Launch in Minutes
 
@@ -32,13 +34,22 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
    # Update wrangler.jsonc with the generated IDs
    ```
 
-4. **Generate and apply database migrations** – Use Drizzle Kit to keep D1 in sync.
+4. **Configure authentication secrets and email provider** – Generate a random `BETTER_AUTH_SECRET`, create a Resend API key, and register the default "from" identity used by transactional email.
+
+   ```bash
+   wrangler secret put BETTER_AUTH_SECRET
+   wrangler secret put RESEND_API_KEY
+   ```
+
+   Update `DEFAULT_EMAIL_FROM_ADDRESS` and `DEFAULT_EMAIL_FROM_NAME` in `wrangler.jsonc` to match your verified sender. Run `npm run auth:generate` whenever you tweak the auth schema so the Drizzle tables stay aligned with Better Auth.
+
+5. **Generate and apply database migrations** – Use Drizzle Kit to keep D1 in sync.
 
    ```bash
    npx wrangler d1 migrations apply cf-next-starter-d1 --remote
    ```
 
-5. **Develop locally with Cloudflare bindings** – Install dependencies and run the dev worker shim.
+6. **Develop locally with Cloudflare bindings** – Install dependencies and run the dev worker shim.
 
    ```bash
    npm install
@@ -58,6 +69,12 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - ESLint and the CI-friendly `npm run test:ci` target execute Vitest alongside Playwright, uploading coverage, Vitest JUnit, and Playwright reports as artifacts.
 - Failures feed directly into the GitHub Checks UI via `dorny/test-reporter`, helping reviewers triage regressions fast.
 
+## Local Guardrails & Commit Workflow
+
+- **Lefthook pre-commit and commit-msg hooks** run `lint-staged` and `commitlint` automatically so formatting and lint rules stay enforced before code lands in the repository.
+- **Prettier + ESLint autofix** integrations keep JavaScript, TypeScript, Markdown, and stylesheets consistently formatted across the codebase.
+- **Commitizen with cz-git adapter** (`npm run commit`) guides contributors through conventional commit messages that satisfy the commit linting rules and produce clear history.
+
 ## Feature Highlights
 
 - 🚀 **Cloudflare-native deployment flow** – `npm run preview` and `npm run deploy` orchestrate the OpenNext build, worker upload, and migrations end-to-end.
@@ -65,4 +82,5 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - 🧰 **Productivity tooling included** – Storybook, Vitest, ESLint, and Playwright ship preconfigured so teams can focus on product velocity.
 - 🛡️ **Type-safe platform bindings** – `cloudflare-env.d.ts` enumerates every Worker binding, keeping runtime configuration transparent and type checked.
 - 📦 **Modern full-stack architecture** – App Router layouts, server actions, and API routes come scaffolded for edge-friendly experiences across regions.
+- 🔐 **Better Auth flows** – Route handlers, D1-backed session storage, and verification emails rendered with React Email ship ready to customize.
 - 🔁 **CI/CD friendly** – Wrangler-compatible commands, artifact uploads, and typed environment contracts keep your GitHub → Cloudflare workflow smooth and auditable.
