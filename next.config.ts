@@ -35,13 +35,6 @@ export default withSentryConfig(nextConfig, {
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,
-
-  release: {
-    setCommits: {
-      commit: process.env.WORKERS_CI_COMMIT_SHA ?? '',
-      repo: 'qzchenwl/cf-next-starter',
-    },
-  },
 });
 
 // added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`
