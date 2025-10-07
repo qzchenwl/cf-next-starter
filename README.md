@@ -14,6 +14,7 @@ Everything you need for a modern full-stack experience comes prewired:
 - **Drizzle ORM** plus schema-first migrations to keep SQL changes predictable and traceable.
 - **Better Auth with React Email** wiring for password sign-in, session storage on D1, and transactional templates rendered with Resend-ready components.
 - **Storybook workspace** for component-driven development and visual QA.
+- **Automated code hygiene** enforced with Prettier, ESLint, lint-staged, and Lefthook-managed Git hooks plus Commitizen prompts.
 
 ## Launch in Minutes
 
@@ -65,6 +66,12 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - Playwright browsers are provisioned so UI checks stay ready for action when you add end-to-end specs.
 - ESLint and the CI-friendly `npm run test:ci` target execute Vitest alongside Playwright, uploading coverage, Vitest JUnit, and Playwright reports as artifacts.
 - Failures feed directly into the GitHub Checks UI via `dorny/test-reporter`, helping reviewers triage regressions fast.
+
+## Local Guardrails & Commit Workflow
+
+- **Lefthook pre-commit and commit-msg hooks** run `lint-staged` and `commitlint` automatically so formatting and lint rules stay enforced before code lands in the repository.
+- **Prettier + ESLint autofix** integrations keep JavaScript, TypeScript, Markdown, and stylesheets consistently formatted across the codebase.
+- **Commitizen with cz-git adapter** (`npm run commit`) guides contributors through conventional commit messages that satisfy the commit linting rules and produce clear history.
 
 ## Feature Highlights
 
