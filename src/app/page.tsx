@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { ArrowUpRight, BookOpenText, Cloud, Workflow } from 'lucide-react';
 
 import { buttonVariants } from '@/components/ui/button';
@@ -11,29 +12,29 @@ import { KvStatusCard } from '@/components/kv-status-card';
 import { R2StatusCard } from '@/components/r2-status-card';
 import { AuthStatusCard } from '@/components/auth-status-card';
 import { SentryStatusCard } from '@/components/sentry-status-card';
+import { LocaleStatusCard } from '@/components/locale-status-card';
 
 const resourceLinks = [
   {
-    title: 'Cloudflare Workers',
-    description: 'Deploy your Next.js application to the edge with the Workers platform.',
+    key: 'workers',
     href: 'https://developers.cloudflare.com/workers/',
     icon: Cloud,
   },
   {
-    title: 'OpenNext for Cloudflare',
-    description: 'Learn how OpenNext builds optimized Workers bundles for Next.js projects.',
+    key: 'openNext',
     href: 'https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/',
     icon: Workflow,
   },
   {
-    title: 'Next.js Documentation',
-    description: 'Brush up on the App Router, server components, and streaming UI.',
+    key: 'nextDocs',
     href: 'https://nextjs.org/docs',
     icon: BookOpenText,
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const t = await getTranslations('Home');
+
   return (
     <div className="relative">
       <div
@@ -45,13 +46,8 @@ export default function Home() {
         <header className="grid gap-10 md:grid-cols-[minmax(0,1fr)_320px] md:items-center">
           <div className="space-y-6">
             <div className="space-y-3">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                Cloudflare + Next.js starter kit
-              </h1>
-              <p className="text-base text-muted-foreground sm:text-lg">
-                Inspect your Cloudflare bindings, validate connections, and ship with confidence using a refreshed
-                dashboard powered by shadcn/ui components.
-              </p>
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{t('heroTitle')}</h1>
+              <p className="text-base text-muted-foreground sm:text-lg">{t('heroDescription')}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
@@ -60,7 +56,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className={cn(buttonVariants({ size: 'lg' }), 'sm:w-auto')}
               >
-                Deploy to Cloudflare Workers
+                {t('primaryAction')}
               </Link>
               <Link
                 href="https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/"
@@ -68,7 +64,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'sm:w-auto')}
               >
-                View Cloudflare guide
+                {t('secondaryAction')}
               </Link>
             </div>
           </div>
@@ -76,15 +72,15 @@ export default function Home() {
           <div className="relative hidden h-full w-full items-center justify-center md:flex">
             <div className="absolute inset-0 rounded-3xl bg-primary/10 blur-2xl" aria-hidden />
             <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-10 shadow-lg">
-              <Image className="dark:invert" src="/next.svg" alt="Next.js logo" width={180} height={38} priority />
+              <Image className="dark:invert" src="/next.svg" alt={t('heroImageAlt')} width={180} height={38} priority />
             </div>
           </div>
         </header>
 
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {resourceLinks.map(({ title, description, href, icon: Icon }) => (
+          {resourceLinks.map(({ key, href, icon: Icon }) => (
             <Card
-              key={title}
+              key={key}
               className="relative overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-md"
             >
               <CardHeader className="space-y-3">
@@ -92,9 +88,11 @@ export default function Home() {
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <CardTitle className="text-xl">{title}</CardTitle>
+                  <CardTitle className="text-xl">{t(`resourceLinks.${key}.title`)}</CardTitle>
                 </div>
-                <CardDescription className="text-sm leading-relaxed">{description}</CardDescription>
+                <CardDescription className="text-sm leading-relaxed">
+                  {t(`resourceLinks.${key}.description`)}
+                </CardDescription>
               </CardHeader>
               <CardFooter className="flex items-center justify-end">
                 <Link
@@ -103,7 +101,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className={cn(buttonVariants({ variant: 'ghost' }), 'gap-2 text-sm font-medium')}
                 >
-                  Explore
+                  {t('resourceAction')}
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </CardFooter>
@@ -112,6 +110,7 @@ export default function Home() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-3">
+          <LocaleStatusCard />
           <D1StatusCard />
           <R2StatusCard />
           <KvStatusCard />
@@ -121,7 +120,7 @@ export default function Home() {
 
         <footer className="border-t border-border pt-8">
           <div className="flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>Built with Next.js, OpenNext, and Cloudflare Workers — ready for your next deployment.</p>
+            <p>{t('footer.note')}</p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="https://nextjs.org/learn"
@@ -129,7 +128,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 hover:text-foreground"
               >
-                Learn Next.js
+                {t('footer.learn')}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
               <Link
@@ -138,7 +137,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 hover:text-foreground"
               >
-                Explore templates
+                {t('footer.templates')}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
               <Link
@@ -147,7 +146,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 hover:text-foreground"
               >
-                Visit nextjs.org
+                {t('footer.visit')}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>

@@ -1,0 +1,41 @@
+{
+  "LocaleCard": {
+    "title": "界面语言",
+    "description": "无需修改 URL，即可切换仪表盘语言。",
+    "activeLanguage": "当前查看：{language}",
+    "cta": "切换到 {language}",
+    "pending": "正在更新语言…",
+    "languages": {
+      "en": "English",
+      "zh": "中文"
+    }
+  },
+  "Home": {
+    "heroTitle": "Cloudflare + Next.js 启动套件",
+    "heroDescription": "检查 Cloudflare 绑定、验证连接，并借助基于 shadcn/ui 组件的全新仪表板自信交付。",
+    "primaryAction": "部署到 Cloudflare Workers",
+    "secondaryAction": "查看 Cloudflare 指南",
+    "resourceAction": "了解更多",
+    "heroImageAlt": "Next.js 标志",
+    "resourceLinks": {
+      "workers": {
+        "title": "Cloudflare Workers",
+        "description": "通过 Workers 平台将 Next.js 应用部署到边缘。"
+      },
+      "openNext": {
+        "title": "Cloudflare 的 OpenNext",
+        "description": "了解 OpenNext 如何为 Next.js 项目构建优化的 Workers 包。"
+      },
+      "nextDocs": {
+        "title": "Next.js 文档",
+        "description": "回顾 App Router、服务端组件和流式 UI 等概念。"
+      }
+    },
+    "footer": {
+      "note": "基于 Next.js、OpenNext 和 Cloudflare Workers 构建——随时准备好下一次部署。",
+      "learn": "学习 Next.js",
+      "templates": "探索模板",
+      "visit": "访问 nextjs.org"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "LocaleCard": {
+    "title": "Interface language",
+    "description": "Switch the dashboard language without changing the URL.",
+    "activeLanguage": "Currently viewing: {language}",
+    "cta": "Switch to {language}",
+    "pending": "Updating language...",
+    "languages": {
+      "en": "English",
+      "zh": "中文"
+    }
+  },
+  "Home": {
+    "heroTitle": "Cloudflare + Next.js starter kit",
+    "heroDescription": "Inspect your Cloudflare bindings, validate connections, and ship with confidence using a refreshed dashboard powered by shadcn/ui components.",
+    "primaryAction": "Deploy to Cloudflare Workers",
+    "secondaryAction": "View Cloudflare guide",
+    "resourceAction": "Explore",
+    "heroImageAlt": "Next.js logo",
+    "resourceLinks": {
+      "workers": {
+        "title": "Cloudflare Workers",
+        "description": "Deploy your Next.js application to the edge with the Workers platform."
+      },
+      "openNext": {
+        "title": "OpenNext for Cloudflare",
+        "description": "Learn how OpenNext builds optimized Workers bundles for Next.js projects."
+      },
+      "nextDocs": {
+        "title": "Next.js Documentation",
+        "description": "Brush up on the App Router, server components, and streaming UI."
+      }
+    },
+    "footer": {
+      "note": "Built with Next.js, OpenNext, and Cloudflare Workers — ready for your next deployment.",
+      "learn": "Learn Next.js",
+      "templates": "Explore templates",
+      "visit": "Visit nextjs.org"
+    }
+  }
+}
