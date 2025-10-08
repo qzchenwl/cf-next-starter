@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from '@sentry/cloudflare';
 
 export const dynamic = 'force-dynamic';
 class SentryExampleAPIError extends Error {

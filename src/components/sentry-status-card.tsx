@@ -87,7 +87,7 @@ export function SentryStatusCard() {
           return;
         }
 
-        throw new Error('Expected a 500 response from the sample API route, but it succeeded.');
+        throw new SentryExampleFrontendError('Expected a 500 response from the sample API route, but it succeeded.');
       },
     );
   };
