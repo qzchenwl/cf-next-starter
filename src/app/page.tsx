@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ArrowUpRight, BookOpenText, Cloud, Workflow } from 'lucide-react';
 
-import { LocaleSwitcher } from '@/components/locale-switcher';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -13,6 +12,7 @@ import { KvStatusCard } from '@/components/kv-status-card';
 import { R2StatusCard } from '@/components/r2-status-card';
 import { AuthStatusCard } from '@/components/auth-status-card';
 import { SentryStatusCard } from '@/components/sentry-status-card';
+import { LocaleStatusCard } from '@/components/locale-status-card';
 
 const resourceLinks = [
   {
@@ -43,9 +43,6 @@ export default async function Home() {
       />
 
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-12 sm:px-10 lg:px-12">
-        <div className="flex justify-end">
-          <LocaleSwitcher />
-        </div>
         <header className="grid gap-10 md:grid-cols-[minmax(0,1fr)_320px] md:items-center">
           <div className="space-y-6">
             <div className="space-y-3">
@@ -113,6 +110,7 @@ export default async function Home() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-3">
+          <LocaleStatusCard />
           <D1StatusCard />
           <R2StatusCard />
           <KvStatusCard />

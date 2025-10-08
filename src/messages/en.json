@@ -1,8 +1,14 @@
 {
-  "LocaleSwitcher": {
-    "switchToEn": "View in English",
-    "switchToZh": "切换到中文",
-    "pending": "Updating language..."
+  "LocaleCard": {
+    "title": "Interface language",
+    "description": "Switch the dashboard language without changing the URL.",
+    "activeLanguage": "Currently viewing: {language}",
+    "cta": "Switch to {language}",
+    "pending": "Updating language...",
+    "languages": {
+      "en": "English",
+      "zh": "中文"
+    }
   },
   "Home": {
     "heroTitle": "Cloudflare + Next.js starter kit",

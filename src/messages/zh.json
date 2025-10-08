@@ -1,8 +1,14 @@
 {
-  "LocaleSwitcher": {
-    "switchToEn": "Switch to English",
-    "switchToZh": "查看中文",
-    "pending": "正在更新语言…"
+  "LocaleCard": {
+    "title": "界面语言",
+    "description": "无需修改 URL，即可切换仪表盘语言。",
+    "activeLanguage": "当前查看：{language}",
+    "cta": "切换到 {language}",
+    "pending": "正在更新语言…",
+    "languages": {
+      "en": "English",
+      "zh": "中文"
+    }
   },
   "Home": {
     "heroTitle": "Cloudflare + Next.js 启动套件",
