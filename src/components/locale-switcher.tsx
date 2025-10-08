@@ -2,8 +2,9 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 
+import { useLocale, useTranslations } from 'next-intl';
+
 import { defaultLocale, locales, type Locale } from '@/lib/i18n/config';
-import { useLocale, useTranslations } from '@/components/translations-provider';
 
 function replaceLocaleInPath(pathname: string, locale: Locale) {
   const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;

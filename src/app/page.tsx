@@ -1,29 +1,27 @@
 import type { Metadata } from 'next';
 
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
+
 import { HomePage } from '@/components/home-page';
-import { LocaleAttributeUpdater } from '@/components/locale-attribute-updater';
-import { TranslationsProvider } from '@/components/translations-provider';
-import { createTranslator } from '@/lib/i18n/create-translator';
 import { defaultLocale } from '@/lib/i18n/config';
-import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const dictionary = await getDictionary(defaultLocale);
-  const translate = createTranslator(dictionary);
+  const translate = await getTranslations({ locale: defaultLocale, namespace: 'metadata' });
 
   return {
-    title: translate('metadata.title'),
-    description: translate('metadata.description'),
+    title: translate('title'),
+    description: translate('description'),
   };
 }
 
 export default async function RootHome() {
-  const dictionary = await getDictionary(defaultLocale);
+  setRequestLocale(defaultLocale);
+  const messages = await getMessages({ locale: defaultLocale });
 
   return (
-    <TranslationsProvider locale={defaultLocale} messages={dictionary}>
-      <LocaleAttributeUpdater locale={defaultLocale} />
-      <HomePage locale={defaultLocale} messages={dictionary} />
-    </TranslationsProvider>
+    <NextIntlClientProvider locale={defaultLocale} messages={messages}>
+      <HomePage locale={defaultLocale} />
+    </NextIntlClientProvider>
   );
 }

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { defaultLocale } from '@/lib/i18n/config';
+import { defaultLocale, isLocale } from '@/lib/i18n/config';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,13 +19,18 @@ export const metadata: Metadata = {
   description: 'Check your Cloudflare bindings with a shadcn/ui dashboard.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale?: string }>;
 }>) {
+  const { locale: paramLocale } = await params;
+  const locale = paramLocale && isLocale(paramLocale) ? paramLocale : defaultLocale;
+
   return (
-    <html lang={defaultLocale}>
+    <html lang={locale}>
       <body
         className={cn(
           'min-h-screen bg-background font-sans text-foreground antialiased',

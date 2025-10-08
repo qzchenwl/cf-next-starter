@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { LocaleAttributeUpdater } from '@/components/locale-attribute-updater';
-import { TranslationsProvider } from '@/components/translations-provider';
-import { createTranslator } from '@/lib/i18n/create-translator';
-import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { isLocale, locales } from '@/lib/i18n/config';
 
 export async function generateStaticParams() {
@@ -18,12 +16,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     notFound();
   }
 
-  const dictionary = await getDictionary(locale);
-  const translate = createTranslator(dictionary);
+  const translate = await getTranslations({ locale, namespace: 'metadata' });
 
   return {
-    title: translate('metadata.title'),
-    description: translate('metadata.description'),
+    title: translate('title'),
+    description: translate('description'),
   };
 }
 
@@ -40,12 +37,12 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const dictionary = await getDictionary(locale);
+  setRequestLocale(locale);
+  const messages = await getMessages({ locale });
 
   return (
-    <TranslationsProvider locale={locale} messages={dictionary}>
-      <LocaleAttributeUpdater locale={locale} />
+    <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
-    </TranslationsProvider>
+    </NextIntlClientProvider>
   );
 }

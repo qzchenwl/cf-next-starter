@@ -6,7 +6,7 @@ import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from '@/components/ui/card';
-import { useTranslations } from '@/components/translations-provider';
+import { useTranslations } from 'next-intl';
 
 export function AuthStatusCard() {
   const [status, setStatus] = useState<'checking' | 'logged-in' | 'logged-out'>('checking');

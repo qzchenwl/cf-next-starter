@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, BookOpenText, Cloud, Workflow } from 'lucide-react';
 
+import { getTranslations } from 'next-intl/server';
+
 import { LocaleSwitcher } from '@/components/locale-switcher';
 import { D1StatusCard } from '@/components/d1-status-card';
 import { KvStatusCard } from '@/components/kv-status-card';
@@ -11,9 +13,7 @@ import { SentryStatusCard } from '@/components/sentry-status-card';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { createTranslator, getTranslator } from '@/lib/i18n/create-translator';
 import type { Locale } from '@/lib/i18n/config';
-import type { Messages } from '@/lib/i18n/messages';
 
 const resourceLinks = [
   {
@@ -33,8 +33,8 @@ const resourceLinks = [
   },
 ];
 
-export async function HomePage({ locale, messages }: { locale: Locale; messages?: Messages }) {
-  const t = messages ? createTranslator(messages) : await getTranslator(locale);
+export async function HomePage({ locale }: { locale: Locale }) {
+  const t = await getTranslations({ locale });
 
   return (
     <div className="relative">
