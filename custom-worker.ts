@@ -12,11 +12,14 @@ const wrappedWorker = Sentry.withSentry(
   worker,
 );
 
+const originalFetch = wrappedWorker.fetch?.bind(wrappedWorker);
+
 wrappedWorker.fetch = async (request, env, ctx) => {
-  if (wrappedWorker.fetch) {
+  if (originalFetch) {
     try {
-      return await wrappedWorker.fetch(request, env, ctx);
+      return await originalFetch(request, env, ctx);
     } catch (err) {
+      console.error(err);
       if (err instanceof Error) {
         return Response.json({ error: err?.['message'] || err.stack || '' });
       } else {
