@@ -5,7 +5,7 @@ import worker from './.open-next/worker.js';
 const sentryEnhancedWorker = Sentry.withSentry(
   (env: CloudflareEnv) => ({
     dsn: env.SENTRY_DSN,
-    release: env.CF_VERSION_METADATA?.id,
+    release: env.SENTRY_RELEASE,
     tracesSampleRate: 1.0,
     enableLogs: true,
   }),
