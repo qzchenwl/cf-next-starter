@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run cf:dev",
-    "build": "node scripts/run-build.js",
+    "build": "npm run cf:build",
     "start": "npm run cf:dev",
     "lint": "eslint .",
     "cf:dev": "OPENNEXT_BUILD=1 npm run cf:build && npx wrangler dev",
