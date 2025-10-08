@@ -11,11 +11,18 @@ class SentryExampleAPIError extends Error {
 // A faulty API route to test Sentry's error monitoring
 export function GET() {
   const error = new SentryExampleAPIError('This error is raised on the backend called by the example page.');
-
-  console.log('SentryExampleAPIError');
-  Sentry.withScope((scope) => {
-    scope.setLevel('error');
-    Sentry.captureException(error);
+  Sentry.captureException(error, {
+    user: {
+      id: 'foo-user-id',
+      username: 'foo-user',
+      email: 'foo-user-email@x.com',
+    },
+    tags: {
+      foo: 'bar',
+    },
+    extra: {
+      foo: 'bar',
+    },
   });
 
   throw error;

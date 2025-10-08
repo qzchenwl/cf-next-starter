@@ -7,7 +7,7 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
   return Number.isFinite(parsed) ? parsed : defaultValue;
 }
 
-const sentryWorker = Sentry.withSentry(
+export default Sentry.withSentry(
   (env: CloudflareEnv) => ({
     dsn: env.SENTRY_DSN,
     release: env.CF_VERSION_METADATA.id,
@@ -16,8 +16,3 @@ const sentryWorker = Sentry.withSentry(
   }),
   worker,
 );
-
-export default sentryWorker;
-
-// The re-export is only required if your app uses the DO Queue and DO Tag Cache
-export const { DOQueueHandler, DOShardedTagCache } = worker;
