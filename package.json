@@ -23,7 +23,7 @@
     "pretest:ci:playwright": "node -e \"require('fs').mkdirSync('reports/playwright', { recursive: true });\"",
     "test:ci:playwright": "PLAYWRIGHT_JUNIT_OUTPUT_NAME=reports/playwright/results.xml playwright test",
     "test:playwright": "playwright test",
-    "postinstall": "node -e \"if (process.env.CI) { console.log('skip lefthook on CI'); process.exit(0); }\" && npx lefthook install || echo \"lefthook skipped\"",
+    "prepare": "lefthook install",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "commit": "cz"
