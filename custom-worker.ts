@@ -6,7 +6,7 @@ import worker from './.open-next/worker.js';
 export default Sentry.withSentry(
   (env: CloudflareEnv) => ({
     dsn: env.SENTRY_DSN,
-    release: env.CF_VERSION_METADATA.id,
+    release: env.CF_VERSION_METADATA?.id,
     tracesSampleRate: 1.0,
     enableLogs: true,
   }),

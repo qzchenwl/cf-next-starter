@@ -10,6 +10,7 @@ import { D1StatusCard } from '@/components/d1-status-card';
 import { KvStatusCard } from '@/components/kv-status-card';
 import { R2StatusCard } from '@/components/r2-status-card';
 import { AuthStatusCard } from '@/components/auth-status-card';
+import { SentryStatusCard } from '@/components/sentry-status-card';
 
 const resourceLinks = [
   {
@@ -115,6 +116,7 @@ export default function Home() {
           <R2StatusCard />
           <KvStatusCard />
           <AuthStatusCard />
+          <SentryStatusCard />
         </section>
 
         <footer className="border-t border-border pt-8">
