@@ -21,13 +21,16 @@ sentryEnhancedWorker.fetch = async (request, env, ctx) => {
       return await boundFetch(request, env, ctx);
     } catch (error) {
       if (error instanceof Error) {
-        return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
+        return Response.json(
+          { error: 'Unexpected server error', message: error.message, stack: error.stack },
+          { status: 500 },
+        );
       } else {
-        return Response.json({ error: `Unknown error occurred: ${error}` });
+        return Response.json({ error: 'Unexpected server error', detail: String(error) }, { status: 500 });
       }
     }
   } else {
-    return Response.json({ error: 'Fetch handler missing from Sentry-wrapped worker' }, { status: 500 });
+    return Response.json({ error: 'Fetch handler unavailable on Sentry-wrapped worker' }, { status: 500 });
   }
 };
 
