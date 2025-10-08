@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/cloudflare';
 // @ts-expect-error `.open-next/worker.ts` is generated at build time
 import worker from './.open-next/worker.js';
 
-const wrappedWorker = Sentry.withSentry(
+const sentryEnhancedWorker = Sentry.withSentry(
   (env: CloudflareEnv) => ({
     dsn: env.SENTRY_DSN,
     release: env.CF_VERSION_METADATA?.id,
@@ -12,22 +12,23 @@ const wrappedWorker = Sentry.withSentry(
   worker,
 );
 
-const originalFetch = wrappedWorker.fetch?.bind(wrappedWorker);
+const boundFetch = sentryEnhancedWorker.fetch?.bind(sentryEnhancedWorker);
 
-wrappedWorker.fetch = async (request, env, ctx) => {
-  if (originalFetch) {
+// Ensure we surface unexpected errors while keeping the Sentry instrumentation.
+sentryEnhancedWorker.fetch = async (request, env, ctx) => {
+  if (boundFetch) {
     try {
-      return await originalFetch(request, env, ctx);
-    } catch (err) {
-      if (err instanceof Error) {
-        return Response.json({ error: err?.message, stack: err.stack }, { status: 500 });
+      return await boundFetch(request, env, ctx);
+    } catch (error) {
+      if (error instanceof Error) {
+        return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
       } else {
-        return Response.json({ error: `Unknown error occurred: ${err}` });
+        return Response.json({ error: `Unknown error occurred: ${error}` });
       }
     }
   } else {
-    return Response.json({ error: 'no fetch in wrappedWorker' }, { status: 500 });
+    return Response.json({ error: 'Fetch handler missing from Sentry-wrapped worker' }, { status: 500 });
   }
 };
 
-export default wrappedWorker;
+export default sentryEnhancedWorker;

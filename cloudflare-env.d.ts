@@ -438,14 +438,7 @@ declare abstract class PromiseRejectionEvent extends Event {
 declare abstract class Navigator {
   sendBeacon(
     url: string,
-    body?:
-      | ReadableStream
-      | string
-      | (ArrayBuffer | ArrayBufferView)
-      | Blob
-      | FormData
-      | URLSearchParams
-      | URLSearchParams,
+    body?: ReadableStream | string | (ArrayBuffer | ArrayBufferView) | Blob | FormData | URLSearchParams,
   ): boolean;
   readonly userAgent: string;
   readonly hardwareConcurrency: number;
