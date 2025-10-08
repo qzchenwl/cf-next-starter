@@ -6,6 +6,7 @@ import { Bug } from 'lucide-react';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/components/translations-provider';
 
 type CardState = 'idle' | 'triggering' | 'reported' | 'failed';
 
@@ -17,6 +18,7 @@ type DebugSentryResponse = {
 export function SentryStatusCard() {
   const [state, setState] = useState<CardState>('idle');
   const [details, setDetails] = useState<string | null>(null);
+  const t = useTranslations('components.sentryStatusCard');
 
   const handleTriggerTestEvent = async () => {
     setState('triggering');
@@ -29,7 +31,7 @@ export function SentryStatusCard() {
       });
 
       if (!response.ok) {
-        let message = 'Triggered a test error. Check your Sentry project for the captured event.';
+        let message = t('statuses.reported.message');
 
         try {
           const payload = (await response.json()) as DebugSentryResponse;
@@ -46,38 +48,34 @@ export function SentryStatusCard() {
       }
 
       const payload = (await response.json()) as DebugSentryResponse;
-      const message =
-        payload.ok && payload.error
-          ? payload.error
-          : 'Request succeeded but no error was triggered. Verify your worker configuration.';
+      const message = payload.ok && payload.error ? payload.error : t('successWithoutError');
 
       setDetails(message);
       setState('reported');
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Failed to reach the Sentry test endpoint. Please try again.';
+      const message = error instanceof Error ? error.message : t('errors.requestFailed');
 
       setDetails(message);
       setState('failed');
     }
   };
 
-  let badgeLabel: string = 'Idle';
+  let badgeLabel: string = t('statuses.idle.label');
   let badgeVariant: BadgeProps['variant'] = 'outline';
-  let statusMessage = 'Trigger a synthetic error to confirm Sentry is receiving events from this worker.';
+  let statusMessage = t('statuses.idle.message');
 
   if (state === 'triggering') {
-    badgeLabel = 'Triggering';
+    badgeLabel = t('statuses.triggering.label');
     badgeVariant = 'secondary';
-    statusMessage = 'Sending a test error to Sentry...';
+    statusMessage = t('statuses.triggering.message');
   } else if (state === 'reported') {
-    badgeLabel = 'Reported';
+    badgeLabel = t('statuses.reported.label');
     badgeVariant = 'default';
-    statusMessage = details ?? 'Test error dispatched. Check Sentry for the captured event.';
+    statusMessage = details ?? t('statuses.reported.message');
   } else if (state === 'failed') {
-    badgeLabel = 'Failed';
+    badgeLabel = t('statuses.failed.label');
     badgeVariant = 'destructive';
-    statusMessage = details ?? 'Unable to trigger the Sentry test event.';
+    statusMessage = details ?? t('statuses.failed.message');
   }
 
   return (
@@ -88,7 +86,7 @@ export function SentryStatusCard() {
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground">
               <Bug className="h-5 w-5" />
             </span>
-            <CardTitle>Sentry</CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
           </div>
           <Badge variant={badgeVariant}>{badgeLabel}</Badge>
         </div>
@@ -96,19 +94,21 @@ export function SentryStatusCard() {
       </CardHeader>
       <CardContent className="space-y-3 text-sm text-muted-foreground">
         <p>
-          The button below calls{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs text-foreground">/api/debug-sentry</code>, which
-          intentionally throws and reports an error using the <code>@sentry/cloudflare</code> SDK.
+          {t('paragraphs.intro.part1')}
+          <code className="rounded bg-muted px-1 py-0.5 text-xs text-foreground">/api/debug-sentry</code>
+          {t('paragraphs.intro.part2')}
+          <code className="rounded bg-muted px-1 py-0.5 text-xs text-foreground">@sentry/cloudflare</code>
+          {t('paragraphs.intro.part3')}
         </p>
         <p>
-          After triggering the event, open your Sentry dashboard to verify that the issue appears along with a span
-          named
-          <span className="font-medium text-foreground">&nbsp;status-card.debug-sentry</span>.
+          {t('paragraphs.followup.part1')}
+          <span className="font-medium text-foreground">{t('paragraphs.followup.span')}</span>
+          {t('paragraphs.followup.part2')}
         </p>
       </CardContent>
       <CardFooter className="justify-end border-t border-border pt-6">
         <Button onClick={handleTriggerTestEvent} disabled={state === 'triggering'}>
-          {state === 'triggering' ? 'Triggering...' : 'Send test event'}
+          {state === 'triggering' ? t('button.loading') : t('button.idle')}
         </Button>
       </CardFooter>
     </Card>
