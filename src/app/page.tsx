@@ -55,7 +55,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                href="https://dash.cloudflare.com/?to=/:account/workers-and-pages/create"
+                href="https://dash.cloudflare.com/?to=/:account/workers-and-pages/create/import-repository"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(buttonVariants({ size: 'lg' }), 'sm:w-auto')}

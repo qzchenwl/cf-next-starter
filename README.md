@@ -22,8 +22,8 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 
 1. **Fork the repository** – Create a GitHub fork so Cloudflare can track your branch builds.
 2. **Import the fork in Cloudflare Dashboard**:
-   - Navigate to **Workers & Pages → Create application → Worker** (or open the account-agnostic shortcut at <https://dash.cloudflare.com/?to=/:account/workers-and-pages/create>).
-   - Choose **Connect to Git**, authorize GitHub, and pick your fork.
+   - Navigate to **[Compute (Workers) -> Workers & Pages → Create application → Workers -> Import a repository](https://dash.cloudflare.com/?to=/:account/workers-and-pages/create/import-repository)**.
+   - Choose **Connect to GitHub**, and pick your fork.
    - Let the initial build finish so Cloudflare mirrors your `main` branch.
 3. **Provision Cloudflare data services** – Create the bindings and paste the identifiers into `wrangler.jsonc`.
 
@@ -31,6 +31,11 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
    npx wrangler d1 create cf-next-starter-d1
    npx wrangler r2 bucket create cf-next-starter-r2
    npx wrangler kv namespace create cf-next-starter-kv
+   # for preview environment
+   npx wrangler d1 create cf-next-starter-d1-preview
+   npx wrangler r2 bucket create cf-next-starter-r2-preview
+   npx wrangler kv namespace create cf-next-starter-kv-preview
+
    # Update wrangler.jsonc with the generated IDs
    ```
 
@@ -39,14 +44,19 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
    ```bash
    wrangler secret put BETTER_AUTH_SECRET
    wrangler secret put RESEND_API_KEY
+   # for preview environment
+   wrangler secret put BETTER_AUTH_SECRET --env preview
+   wrangler secret put RESEND_API_KEY --env preview
    ```
 
-   Update `DEFAULT_EMAIL_FROM_ADDRESS` and `DEFAULT_EMAIL_FROM_NAME` in `wrangler.jsonc` to match your verified sender. Run `npm run auth:generate` whenever you tweak the auth schema so the Drizzle tables stay aligned with Better Auth.
+   Update `DEFAULT_EMAIL_FROM_ADDRESS` and `DEFAULT_EMAIL_FROM_NAME` in `wrangler.jsonc` to match your verified sender.
 
 5. **Generate and apply database migrations** – Use Drizzle Kit to keep D1 in sync.
 
    ```bash
    npx wrangler d1 migrations apply cf-next-starter-d1 --remote
+   # for preview environment
+   npx wrangler d1 migrations apply cf-next-starter-d1-preview --remote --env preview
    ```
 
 6. **Develop locally with Cloudflare bindings** – Install dependencies and run the dev worker shim.
