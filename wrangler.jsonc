@@ -5,7 +5,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "cf-next-starter",
-  "main": ".open-next/worker.js",
+  "main": "./custom-worker.ts",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": [
     "nodejs_compat",
@@ -16,6 +16,9 @@
   "assets": {
     "binding": "ASSETS",
     "directory": ".open-next/assets"
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
   },
   "r2_buckets": [
     {
@@ -43,7 +46,9 @@
   "vars": {
     "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
     "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter",
-    "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com"
+    "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com",
+    "SENTRY_DSN": "https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368",
+    "SENTRY_TRACES_SAMPLE_RATE": "1"
   },
   "env": {
     "preview": {
@@ -70,7 +75,9 @@
       "vars": {
         "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
         "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter",
-        "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com"
+        "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com",
+        "SENTRY_DSN": "https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368",
+        "SENTRY_TRACES_SAMPLE_RATE": "1"
       }
     }
   }
