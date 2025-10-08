@@ -2,17 +2,20 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 
-import { locales, type Locale } from '@/lib/i18n/config';
+import { defaultLocale, locales, type Locale } from '@/lib/i18n/config';
 import { useLocale, useTranslations } from '@/components/translations-provider';
 
 function replaceLocaleInPath(pathname: string, locale: Locale) {
-  const segments = pathname.split('/');
+  const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  const segments = normalizedPath.slice(1).split('/').filter(Boolean);
+  const rest = segments.slice(1);
+  const tail = rest.join('/');
 
-  if (segments.length > 1) {
-    segments[1] = locale;
+  if (locale === defaultLocale) {
+    return tail ? `/${tail}` : '/';
   }
 
-  return segments.join('/') || `/${locale}`;
+  return tail ? `/${locale}/${tail}` : `/${locale}`;
 }
 
 export function LocaleSwitcher() {

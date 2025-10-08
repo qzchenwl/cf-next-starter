@@ -1,18 +1,6 @@
 import type { NextConfig } from 'next';
 
-import { defaultLocale } from './src/lib/i18n/config';
-
-const nextConfig: NextConfig = {
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: `/${defaultLocale}`,
-        permanent: false,
-      },
-    ];
-  },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
 
