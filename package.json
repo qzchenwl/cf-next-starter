@@ -15,7 +15,7 @@
     "auth:generate": "npx @better-auth/cli@latest generate --config ./scripts/auth.schema.ts --output ./src/db/auth-schema.ts --yes",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest run",
+    "test": "npm run test:ci",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ci": "npm-run-all --parallel test:ci:vitest test:ci:playwright",
