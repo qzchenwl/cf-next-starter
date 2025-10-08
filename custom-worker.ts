@@ -2,15 +2,6 @@ import * as Sentry from '@sentry/cloudflare';
 // @ts-expect-error `.open-next/worker.ts` is generated at build time
 import worker from './.open-next/worker.js';
 
-function parseSampleRate(value: string | undefined, defaultValue: number): number {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) {
-    return defaultValue;
-  }
-
-  return parsed >= 0 && parsed <= 1 ? parsed : defaultValue;
-}
-
 const wrappedWorker = Sentry.withSentry(
   (env: CloudflareEnv) => ({
     dsn: env.SENTRY_DSN,
@@ -20,5 +11,21 @@ const wrappedWorker = Sentry.withSentry(
   }),
   worker,
 );
+
+wrappedWorker.fetch = async (request, env, ctx) => {
+  if (wrappedWorker.fetch) {
+    try {
+      return await wrappedWorker.fetch(request, env, ctx);
+    } catch (err) {
+      if (err instanceof Error) {
+        return Response.json({ error: err?.['message'] || err.stack || '' });
+      } else {
+        return Response.json({ error: `Unknown error occurred: ${err}` });
+      }
+    }
+  } else {
+    return Response.json({ error: 'no fetch in wrappedWorker' });
+  }
+};
 
 export default wrappedWorker;
