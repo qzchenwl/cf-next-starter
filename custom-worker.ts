@@ -7,12 +7,9 @@ function parseSampleRate(value: string | undefined, defaultValue: number): numbe
   return Number.isFinite(parsed) ? parsed : defaultValue;
 }
 
-export default Sentry.withSentry(
-  (env: CloudflareEnv) => ({
-    dsn: env.SENTRY_DSN,
-    release: env.CF_VERSION_METADATA.id,
-    tracesSampleRate: parseSampleRate(env.SENTRY_TRACES_SAMPLE_RATE, 1),
-    enableLogs: true,
-  }),
-  worker,
-);
+export default Sentry.withSentry(worker, (env: CloudflareEnv) => ({
+  dsn: env.SENTRY_DSN,
+  release: env.CF_VERSION_METADATA.id,
+  tracesSampleRate: parseSampleRate(env.SENTRY_TRACES_SAMPLE_RATE, 1),
+  enableLogs: true,
+}));
