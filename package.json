@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ci": "npm-run-all --parallel test:ci:vitest test:ci:playwright",
+    "pretest:ci": "npx playwright install",
     "test:ci:vitest": "vitest run --coverage --reporter=default --reporter=junit --outputFile=reports/vitest-junit.xml",
     "pretest:ci:playwright": "node -e \"require('fs').mkdirSync('reports/playwright', { recursive: true });\"",
     "test:ci:playwright": "PLAYWRIGHT_JUNIT_OUTPUT_NAME=reports/playwright/results.xml playwright test",
