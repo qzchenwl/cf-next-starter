@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
+
 import './globals.css';
 import { cn } from '@/lib/utils';
 
@@ -18,13 +21,16 @@ export const metadata: Metadata = {
   description: 'Check your Cloudflare bindings with a shadcn/ui dashboard.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={cn(
           'min-h-screen bg-background font-sans text-foreground antialiased',
@@ -32,7 +38,9 @@ export default function RootLayout({
           geistMono.variable,
         )}
       >
-        {children}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

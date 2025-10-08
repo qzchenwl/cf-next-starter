@@ -1,0 +1,38 @@
+{
+  "Metadata": {
+    "title": "Cloudflare + Next.js starter",
+    "description": "Check your Cloudflare bindings with a shadcn/ui dashboard."
+  },
+  "Home": {
+    "hero": {
+      "title": "Cloudflare + Next.js starter kit",
+      "description": "Inspect your Cloudflare bindings, validate connections, and ship with confidence using a refreshed dashboard powered by shadcn/ui components.",
+      "primaryCta": "Deploy to Cloudflare Workers",
+      "secondaryCta": "View Cloudflare guide",
+      "imageAlt": "Next.js logo"
+    },
+    "resources": {
+      "cloudflareWorkers": {
+        "title": "Cloudflare Workers",
+        "description": "Deploy your Next.js application to the edge with the Workers platform."
+      },
+      "openNext": {
+        "title": "OpenNext for Cloudflare",
+        "description": "Learn how OpenNext builds optimized Workers bundles for Next.js projects."
+      },
+      "nextDocs": {
+        "title": "Next.js Documentation",
+        "description": "Brush up on the App Router, server components, and streaming UI."
+      },
+      "cta": "Explore"
+    },
+    "footer": {
+      "tagline": "Built with Next.js, OpenNext, and Cloudflare Workers — ready for your next deployment.",
+      "links": {
+        "learn": "Learn Next.js",
+        "templates": "Explore templates",
+        "website": "Visit nextjs.org"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "Metadata": {
+    "title": "Cloudflare + Next.js 入门项目",
+    "description": "使用 shadcn/ui 仪表板检查 Cloudflare 绑定。"
+  },
+  "Home": {
+    "hero": {
+      "title": "Cloudflare + Next.js 入门套件",
+      "description": "检查 Cloudflare 绑定、验证连接，并借助焕新的 shadcn/ui 仪表板自信上线。",
+      "primaryCta": "部署到 Cloudflare Workers",
+      "secondaryCta": "查看 Cloudflare 指南",
+      "imageAlt": "Next.js 标志"
+    },
+    "resources": {
+      "cloudflareWorkers": {
+        "title": "Cloudflare Workers",
+        "description": "使用 Workers 平台将 Next.js 应用部署到边缘。"
+      },
+      "openNext": {
+        "title": "适用于 Cloudflare 的 OpenNext",
+        "description": "了解 OpenNext 如何为 Next.js 项目构建优化的 Workers 包。"
+      },
+      "nextDocs": {
+        "title": "Next.js 文档",
+        "description": "温习 App Router、服务器组件以及流式 UI。"
+      },
+      "cta": "了解更多"
+    },
+    "footer": {
+      "tagline": "基于 Next.js、OpenNext 和 Cloudflare Workers 构建——随时准备下一次部署。",
+      "links": {
+        "learn": "学习 Next.js",
+        "templates": "探索模板",
+        "website": "访问 nextjs.org"
+      }
+    }
+  }
+}
