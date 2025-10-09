@@ -13,7 +13,7 @@ export function AuthStatusCard() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeAction, setActiveAction] = useState<'login' | 'register' | null>(null);
+  const [activeAction, setActiveAction] = useState<'login' | 'register' | 'google' | null>(null);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
@@ -117,6 +117,29 @@ export function AuthStatusCard() {
       await refreshSession(credentials.email);
       setPasswordInput('');
       setInfo('Account created successfully.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setIsLoading(false);
+      setActiveAction(null);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setActiveAction('google');
+    setError(null);
+    setInfo(null);
+    try {
+      const { error } = await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: window.location.href,
+      });
+      if (error) {
+        setError(error.message ?? 'Unknown error');
+      } else {
+        setInfo('Redirecting to Google for authentication...');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -259,6 +282,14 @@ export function AuthStatusCard() {
           </Button>
         ) : (
           <>
+            <Button
+              variant="outline"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading || status === 'checking'}
+              className="w-full flex-1 sm:flex-none"
+            >
+              {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Sign in with Google'}
+            </Button>
             <Button
               onClick={handleLogin}
               disabled={isLoading || status === 'checking'}

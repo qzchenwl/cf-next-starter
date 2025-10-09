@@ -1,5 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { google } from 'better-auth/providers/google';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 
 import * as authSchema from '@/db/auth-schema';
@@ -39,6 +40,12 @@ export async function createAuth(env: CloudflareEnv) {
       provider: 'sqlite',
       schema: authSchema,
     }),
+    providers: [
+      google({
+        clientId: env.BETTER_AUTH_GOOGLE_CLIENT_ID,
+        clientSecret: env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
+      }),
+    ],
     ...baseBetterAuthOptions,
     trustedOrigins,
   });

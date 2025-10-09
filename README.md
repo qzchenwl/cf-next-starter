@@ -39,17 +39,22 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
    # Update wrangler.jsonc with the generated IDs
    ```
 
-4. **Configure authentication secrets and email provider** – Generate a random `BETTER_AUTH_SECRET`, create a Resend API key, and register the default "from" identity used by transactional email.
+4. **Configure authentication secrets and email provider** – Generate a random `BETTER_AUTH_SECRET`, create a Resend API key, and register the default "from" identity used by transactional email. When enabling Google sign-in, also create an OAuth Client ID (Web application) in the Google Cloud Console and capture the client ID/secret.
 
    ```bash
    wrangler secret put BETTER_AUTH_SECRET
    wrangler secret put RESEND_API_KEY
+   wrangler secret put BETTER_AUTH_GOOGLE_CLIENT_ID
+   wrangler secret put BETTER_AUTH_GOOGLE_CLIENT_SECRET
    # for preview environment
    wrangler secret put BETTER_AUTH_SECRET --env preview
    wrangler secret put RESEND_API_KEY --env preview
+   wrangler secret put BETTER_AUTH_GOOGLE_CLIENT_ID --env preview
+   wrangler secret put BETTER_AUTH_GOOGLE_CLIENT_SECRET --env preview
    ```
 
    Update `DEFAULT_EMAIL_FROM_ADDRESS` and `DEFAULT_EMAIL_FROM_NAME` in `wrangler.jsonc` to match your verified sender.
+   For Google OAuth, add your deployed domains (and `http://localhost:8787` for local testing) as authorized origins and callback URLs in the Google Cloud Console.
 
 5. **Generate and apply database migrations** – Use Drizzle Kit to keep D1 in sync.
 
