@@ -1,6 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { google } from 'better-auth/providers/google';
+import { google } from 'better-auth/social-providers';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 
 import * as authSchema from '@/db/auth-schema';
