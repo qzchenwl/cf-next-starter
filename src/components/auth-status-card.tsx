@@ -133,7 +133,6 @@ export function AuthStatusCard() {
     try {
       const { error } = await authClient.signIn.social({
         provider: 'google',
-        callbackURL: window.location.href,
       });
       if (error) {
         setError(error.message ?? 'Unknown error');
