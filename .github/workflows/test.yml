@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
           cache: npm
 
       - name: Install dependencies
@@ -51,6 +51,14 @@ jobs:
           path: |
             playwright-report
             reports/playwright/results.xml
+          if-no-files-found: warn
+
+      - name: Upload SEO snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-home-no-js
+          path: artifacts/seo
           if-no-files-found: warn
 
       - name: Vitest Test Report

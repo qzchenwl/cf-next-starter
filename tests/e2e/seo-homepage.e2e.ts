@@ -6,11 +6,15 @@ const seoArtifactsDir = 'artifacts/seo';
 const screenshotPath = `${seoArtifactsDir}/home-no-js.png`;
 
 test.describe('homepage seo without javascript', () => {
-  test('captures ssr content and metadata', async ({ page, context }) => {
+  test('captures ssr content and metadata', async ({ page, context }, testInfo) => {
     await page.goto('/');
 
     await mkdir(seoArtifactsDir, { recursive: true });
     await page.screenshot({ path: screenshotPath, fullPage: true });
+    await testInfo.attach('seo-home-no-js', {
+      path: screenshotPath,
+      contentType: 'image/png',
+    });
 
     await expect(page).toHaveTitle('Cloudflare + Next.js starter');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
