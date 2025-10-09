@@ -79,6 +79,16 @@ GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:
 - ESLint and the CI-friendly `npm run test:ci` target execute Vitest alongside Playwright, uploading coverage, Vitest JUnit, and Playwright reports as artifacts.
 - Failures feed directly into the GitHub Checks UI via `dorny/test-reporter`, helping reviewers triage regressions fast.
 
+## No-JS SEO snapshots
+
+Validate the server-rendered homepage and capture a JavaScript-disabled screenshot with the dedicated Playwright suite:
+
+1. Install the Chromium browser that the suite depends on: `npx playwright install chromium`.
+2. On fresh Debian/Ubuntu environments, install the system packages Playwright needs to launch headless Chromium: `npx playwright install-deps chromium`.
+3. Run `npm run test:seo` to build the worker, spin up the local dev server, and execute the no-JS checks.
+
+The run saves an `artifacts/seo/home-no-js.png` snapshot of the homepage exactly as search engines see it, alongside assertions that verify the SSR metadata and hero content. When CI executes `npm run test:ci`, the `Test and lint` workflow uploads the contents of `artifacts/seo/` as a GitHub Actions artifact named `seo-home-no-js`, so reviewers can download the latest no-JS render from each run.
+
 ## Local Guardrails & Commit Workflow
 
 - **Lefthook pre-commit and commit-msg hooks** run `lint-staged` and `commitlint` automatically so formatting and lint rules stay enforced before code lands in the repository.
