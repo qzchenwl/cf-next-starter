@@ -1,9 +1,10 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { emailOTP } from 'better-auth/plugins';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 
 import * as authSchema from '@/db/auth-schema';
-import { sendVerificationEmail } from '@/lib/email';
+import { sendLoginCodeEmail, sendVerificationEmail } from '@/lib/email';
 
 const fallbackTrustedOrigins = ['http://localhost:8787', '*.workers.dev'];
 
@@ -15,6 +16,11 @@ export const baseBetterAuthOptions: BetterAuthOptions = {
     sendOnSignUp: true,
     sendVerificationEmail,
   },
+  plugins: [
+    emailOTP({
+      sendVerificationOTP: sendLoginCodeEmail,
+    }),
+  ],
 };
 
 export function parseTrustedOrigins(rawOrigins?: string | null): string[] {

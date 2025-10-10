@@ -3,6 +3,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { Resend } from 'resend';
 import type { CreateEmailOptions, RequireAtLeastOne } from 'resend';
 import type { ReactNode } from 'react';
+import LoginCodeEmail from '@/components/login-code-email';
 import VerificationEmail from '@/components/verification-email';
 
 interface EmailRenderOptions {
@@ -32,5 +33,22 @@ export async function sendVerificationEmail(
     to: user.email,
     subject: 'Verification email',
     react: <VerificationEmail name={user.name} url={url} />,
+  });
+}
+
+export async function sendLoginCodeEmail(
+  data: { email: string; otp: string; type: 'sign-in' | 'email-verification' | 'forget-password' },
+  request?: Request, // eslint-disable-line @typescript-eslint/no-unused-vars
+) {
+  const subjects: Record<typeof data.type, string> = {
+    'sign-in': 'Your login code',
+    'email-verification': 'Verify your email with a code',
+    'forget-password': 'Reset your password code',
+  };
+
+  await sendEmail({
+    to: data.email,
+    subject: subjects[data.type],
+    react: <LoginCodeEmail email={data.email} otp={data.otp} type={data.type} />,
   });
 }

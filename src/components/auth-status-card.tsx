@@ -7,6 +7,7 @@ import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from '@/components/ui/card';
+import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 
 export function AuthStatusCard() {
@@ -17,9 +18,13 @@ export function AuthStatusCard() {
     message: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeAction, setActiveAction] = useState<'sign-in' | 'sign-up' | 'google' | null>(null);
+  const [activeAction, setActiveAction] = useState<'sign-in' | 'sign-up' | 'google' | 'otp-send' | 'otp-verify' | null>(
+    null,
+  );
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [otpInput, setOtpInput] = useState('');
+  const [authMode, setAuthMode] = useState<'credentials' | 'otp'>('credentials');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
 
   // Initial session state
@@ -31,12 +36,16 @@ export function AuthStatusCard() {
         setUserEmail(session.user.email);
         setEmailInput(session.user.email ?? '');
         setPasswordInput('');
+        setOtpInput('');
+        setAuthMode('credentials');
         setIsEmailVerified(Boolean(session.user.emailVerified));
         setStatus('logged-in');
       } else {
         setUserEmail(null);
         setEmailInput('');
         setPasswordInput('');
+        setOtpInput('');
+        setAuthMode('credentials');
         setIsEmailVerified(null);
         setStatus('logged-out');
       }
@@ -44,18 +53,35 @@ export function AuthStatusCard() {
     void loadSession();
   }, []);
 
-  const ensureCredentials = (currentMode: 'sign-in' | 'sign-up') => {
-    const normalizedEmail = emailInput.trim();
-    const password = passwordInput;
+  const emailPattern = /.+@.+\..+/;
 
-    if (!normalizedEmail || !password) {
-      setFeedback({ tone: 'error', message: 'Please provide both email and password.' });
+  const ensureEmail = () => {
+    const normalizedEmail = emailInput.trim();
+
+    if (!normalizedEmail) {
+      setFeedback({ tone: 'error', message: 'Please provide your email address.' });
       return null;
     }
 
-    const emailPattern = /.+@.+\..+/;
     if (!emailPattern.test(normalizedEmail)) {
       setFeedback({ tone: 'error', message: 'Please enter a valid email address.' });
+      return null;
+    }
+
+    setEmailInput(normalizedEmail);
+    return normalizedEmail;
+  };
+
+  const ensureCredentials = (currentMode: 'sign-in' | 'sign-up') => {
+    const normalizedEmail = ensureEmail();
+    const password = passwordInput;
+
+    if (!normalizedEmail) {
+      return null;
+    }
+
+    if (!password) {
+      setFeedback({ tone: 'error', message: 'Please provide both email and password.' });
       return null;
     }
 
@@ -73,6 +99,8 @@ export function AuthStatusCard() {
     setUserEmail(nextEmail);
     setEmailInput(nextEmail ?? fallbackEmail ?? '');
     setIsEmailVerified(session?.user ? Boolean(session.user.emailVerified) : null);
+    setAuthMode('credentials');
+    setOtpInput('');
     setStatus(session?.user ? 'logged-in' : 'logged-out');
   };
 
@@ -165,10 +193,85 @@ export function AuthStatusCard() {
     setUserEmail(null);
     setEmailInput('');
     setPasswordInput('');
+    setOtpInput('');
+    setAuthMode('credentials');
     setStatus('logged-out');
     setIsEmailVerified(null);
     setFeedback(null);
     setIsLoading(false);
+  };
+
+  const handleSendOtp = async () => {
+    const email = ensureEmail();
+    if (!email) {
+      return;
+    }
+
+    setIsLoading(true);
+    setActiveAction('otp-send');
+    setFeedback(null);
+    try {
+      const { error } = await authClient.emailOtp.sendVerificationOtp({
+        email,
+        type: 'sign-in',
+      });
+      if (error) {
+        setFeedback({ tone: 'error', message: error.message ?? 'Unable to send the login code.' });
+        return;
+      }
+
+      setAuthMode('otp');
+      setOtpInput('');
+      setFeedback({
+        tone: 'success',
+        message: 'We emailed you a one-time code. Enter it below to finish signing in.',
+      });
+    } catch (err) {
+      setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
+    } finally {
+      setIsLoading(false);
+      setActiveAction(null);
+    }
+  };
+
+  const handleOtpSignIn = async () => {
+    const email = ensureEmail();
+    const rawOtp = otpInput.trim();
+
+    if (!email) {
+      return;
+    }
+
+    if (!rawOtp) {
+      setFeedback({ tone: 'error', message: 'Enter the code from your email to continue.' });
+      return;
+    }
+
+    setIsLoading(true);
+    setActiveAction('otp-verify');
+    setFeedback(null);
+
+    try {
+      const { error } = await authClient.signIn.emailOtp({
+        email,
+        otp: rawOtp.replace(/\s+/g, ''),
+      });
+      if (error) {
+        setFeedback({ tone: 'error', message: error.message ?? 'Unable to verify the code.' });
+        return;
+      }
+
+      await refreshSession(email);
+      setPasswordInput('');
+      setOtpInput('');
+      setAuthMode('credentials');
+      setFeedback({ tone: 'success', message: 'Signed in with your one-time code.' });
+    } catch (err) {
+      setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
+    } finally {
+      setIsLoading(false);
+      setActiveAction(null);
+    }
   };
 
   let badgeVariant: BadgeProps['variant'];
@@ -281,10 +384,11 @@ export function AuthStatusCard() {
           </div>
         ) : null}
 
-        {status === 'logged-out' ? (
+        {status === 'logged-out' && authMode === 'credentials' ? (
           <div className="space-y-6">
             <div className="space-y-4">
               <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
+                <Icons.google className="mr-2 h-4 w-4" />
                 {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Continue with Google'}
               </Button>
 
@@ -354,6 +458,18 @@ export function AuthStatusCard() {
                   className="w-full"
                   variant="secondary"
                   onClick={() => {
+                    void handleSendOtp();
+                  }}
+                >
+                  {isLoading && activeAction === 'otp-send' ? 'Sending…' : 'Send code'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={isLoading}
+                  className="w-full"
+                  onClick={() => {
                     void handleRegister();
                   }}
                 >
@@ -361,6 +477,48 @@ export function AuthStatusCard() {
                 </Button>
               </form>
             </div>
+          </div>
+        ) : null}
+
+        {status === 'logged-out' && authMode === 'otp' ? (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Enter the one-time code we emailed to <span className="font-medium text-foreground">{emailInput}</span>.
+            </p>
+
+            <form
+              className="space-y-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void handleOtpSignIn();
+              }}
+            >
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="auth-otp">
+                  One-time code
+                </label>
+                <input
+                  id="auth-otp"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  placeholder="Enter the 6-digit code"
+                  value={otpInput}
+                  onChange={(event) => {
+                    setOtpInput(event.target.value);
+                    if (feedback?.tone === 'error') {
+                      setFeedback(null);
+                    }
+                  }}
+                  autoComplete="one-time-code"
+                />
+              </div>
+
+              <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading && activeAction === 'otp-verify' ? 'Signing in…' : 'Sign in'}
+              </Button>
+            </form>
           </div>
         ) : null}
       </CardContent>
