@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { Check, Clock, User, XCircle } from 'lucide-react';
 
 import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
@@ -205,7 +205,9 @@ export function AuthStatusCard() {
     verificationMessage = null;
   }
 
-  const feedbackStyles: Record<NonNullable<typeof feedback>['tone'], string> = {
+  type FeedbackTone = NonNullable<typeof feedback>['tone'];
+
+  const feedbackStyles: Record<FeedbackTone, string> = {
     success:
       'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-200',
     error:
@@ -213,7 +215,7 @@ export function AuthStatusCard() {
     info: 'border-primary/50 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/15 dark:text-primary-foreground',
   };
 
-  const feedbackIcon: Record<NonNullable<typeof feedback>['tone'], JSX.Element> = {
+  const feedbackIcon: Record<FeedbackTone, ReactNode> = {
     success: <Check className="h-4 w-4" aria-hidden />,
     error: <XCircle className="h-4 w-4" aria-hidden />,
     info: <Clock className="h-4 w-4" aria-hidden />,
