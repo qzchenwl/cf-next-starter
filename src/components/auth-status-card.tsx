@@ -352,6 +352,7 @@ export function AuthStatusCard() {
                   type="button"
                   disabled={isLoading}
                   className="w-full"
+                  variant="secondary"
                   onClick={() => {
                     void handleRegister();
                   }}
