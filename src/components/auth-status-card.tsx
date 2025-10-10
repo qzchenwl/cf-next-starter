@@ -1,19 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { User } from 'lucide-react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { Check, Clock, User, XCircle } from 'lucide-react';
+
 import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 export function AuthStatusCard() {
   const [status, setStatus] = useState<'checking' | 'logged-in' | 'logged-out'>('checking');
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{
+    tone: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeAction, setActiveAction] = useState<'login' | 'register' | 'google' | null>(null);
+  const [activeAction, setActiveAction] = useState<'sign-in' | 'sign-up' | 'google' | null>(null);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
@@ -40,12 +44,23 @@ export function AuthStatusCard() {
     void loadSession();
   }, []);
 
-  const ensureCredentials = () => {
+  const ensureCredentials = (currentMode: 'sign-in' | 'sign-up') => {
     const normalizedEmail = emailInput.trim();
     const password = passwordInput;
 
     if (!normalizedEmail || !password) {
-      setError('Please provide both email and password.');
+      setFeedback({ tone: 'error', message: 'Please provide both email and password.' });
+      return null;
+    }
+
+    const emailPattern = /.+@.+\..+/;
+    if (!emailPattern.test(normalizedEmail)) {
+      setFeedback({ tone: 'error', message: 'Please enter a valid email address.' });
+      return null;
+    }
+
+    if (currentMode === 'sign-up' && password.length < 8) {
+      setFeedback({ tone: 'error', message: 'Use at least 8 characters for your password.' });
       return null;
     }
 
@@ -62,15 +77,14 @@ export function AuthStatusCard() {
   };
 
   const handleLogin = async () => {
-    const credentials = ensureCredentials();
+    const credentials = ensureCredentials('sign-in');
     if (!credentials) {
       return;
     }
 
     setIsLoading(true);
-    setActiveAction('login');
-    setError(null);
-    setInfo(null);
+    setActiveAction('sign-in');
+    setFeedback(null);
     setEmailInput(credentials.email);
     try {
       const { error } = await authClient.signIn.email({
@@ -78,14 +92,14 @@ export function AuthStatusCard() {
         password: credentials.password,
       });
       if (error) {
-        setError(error.message ?? 'Unknown error');
+        setFeedback({ tone: 'error', message: error.message ?? 'Unknown error' });
         return;
       }
       await refreshSession(credentials.email);
       setPasswordInput('');
-      setInfo('Signed in successfully.');
+      setFeedback({ tone: 'success', message: 'Signed in successfully.' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -93,15 +107,14 @@ export function AuthStatusCard() {
   };
 
   const handleRegister = async () => {
-    const credentials = ensureCredentials();
+    const credentials = ensureCredentials('sign-up');
     if (!credentials) {
       return;
     }
 
     setIsLoading(true);
-    setActiveAction('register');
-    setError(null);
-    setInfo(null);
+    setActiveAction('sign-up');
+    setFeedback(null);
     setEmailInput(credentials.email);
     try {
       const { error } = await authClient.signUp.email({
@@ -110,15 +123,15 @@ export function AuthStatusCard() {
         password: credentials.password,
       });
       if (error) {
-        setError(error.message ?? 'Unknown error');
+        setFeedback({ tone: 'error', message: error.message ?? 'Unknown error' });
         return;
       }
 
       await refreshSession(credentials.email);
       setPasswordInput('');
-      setInfo('Account created successfully.');
+      setFeedback({ tone: 'success', message: 'Account created successfully. You can sign in right away.' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -128,19 +141,18 @@ export function AuthStatusCard() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setActiveAction('google');
-    setError(null);
-    setInfo(null);
+    setFeedback(null);
     try {
       const { error } = await authClient.signIn.social({
         provider: 'google',
       });
       if (error) {
-        setError(error.message ?? 'Unknown error');
+        setFeedback({ tone: 'error', message: error.message ?? 'Unknown error' });
       } else {
-        setInfo('Redirecting to Google for authentication...');
+        setFeedback({ tone: 'info', message: 'Redirecting to Google for authentication…' });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setIsLoading(false);
       setActiveAction(null);
@@ -155,7 +167,7 @@ export function AuthStatusCard() {
     setPasswordInput('');
     setStatus('logged-out');
     setIsEmailVerified(null);
-    setInfo(null);
+    setFeedback(null);
     setIsLoading(false);
   };
 
@@ -191,6 +203,22 @@ export function AuthStatusCard() {
     verificationMessage = null;
   }
 
+  type FeedbackTone = NonNullable<typeof feedback>['tone'];
+
+  const feedbackStyles: Record<FeedbackTone, string> = {
+    success:
+      'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-200',
+    error:
+      'border-destructive/50 bg-destructive/10 text-destructive dark:border-destructive/40 dark:bg-destructive/20 dark:text-destructive-foreground',
+    info: 'border-primary/50 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/15 dark:text-primary-foreground',
+  };
+
+  const feedbackIcon: Record<FeedbackTone, ReactNode> = {
+    success: <Check className="h-4 w-4" aria-hidden />,
+    error: <XCircle className="h-4 w-4" aria-hidden />,
+    info: <Clock className="h-4 w-4" aria-hidden />,
+  };
+
   return (
     <Card className="h-full">
       <CardHeader className="space-y-4">
@@ -214,97 +242,151 @@ export function AuthStatusCard() {
         {verificationMessage ? <p className="text-sm text-muted-foreground">{verificationMessage}</p> : null}
       </CardHeader>
 
-      {error && (
+      {feedback ? (
         <CardContent>
-          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-            {error}
+          <div
+            className={cn(
+              'flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors',
+              feedbackStyles[feedback.tone],
+            )}
+          >
+            {feedbackIcon[feedback.tone]}
+            <p>{feedback.message}</p>
           </div>
         </CardContent>
-      )}
+      ) : null}
 
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium" htmlFor="auth-email">
-            Email
-          </label>
-          <input
-            id="auth-email"
-            type="email"
-            className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="you@example.com"
-            value={emailInput}
-            onChange={(event) => {
-              setEmailInput(event.target.value);
-              if (error) {
-                setError(null);
-              }
-              if (info) {
-                setInfo(null);
-              }
-            }}
-            autoComplete="email"
-            disabled={isLoading || status !== 'logged-out'}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="block text-sm font-medium" htmlFor="auth-password">
-            Password
-          </label>
-          <input
-            id="auth-password"
-            type="password"
-            className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Enter a secure password"
-            value={passwordInput}
-            onChange={(event) => {
-              setPasswordInput(event.target.value);
-              if (error) {
-                setError(null);
-              }
-              if (info) {
-                setInfo(null);
-              }
-            }}
-            autoComplete={status === 'logged-in' ? 'off' : 'current-password'}
-            disabled={isLoading || status !== 'logged-out'}
-          />
-        </div>
-        {info && (
-          <div className="rounded-md border border-muted bg-muted/20 p-3 text-sm text-muted-foreground">{info}</div>
-        )}
+      <CardContent className="space-y-6">
+        {status === 'checking' ? (
+          <div className="space-y-4">
+            <div className="h-3 w-1/2 rounded bg-muted animate-pulse" />
+            <div className="h-9 rounded-md bg-muted/60 animate-pulse" />
+            <div className="h-9 rounded-md bg-muted/60 animate-pulse" />
+          </div>
+        ) : null}
+
+        {status === 'logged-in' ? (
+          <div className="space-y-4">
+            <div className="rounded-md border border-muted bg-muted/20 p-4">
+              <p className="text-sm text-muted-foreground">
+                You are signed in as <span className="font-medium text-foreground">{userEmail}</span>.
+                {isEmailVerified === false
+                  ? ' We have sent a verification email to help you unlock all features.'
+                  : ' Your verification status looks good!'}
+              </p>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Need to switch accounts? Sign out below and sign back in with a different email address.
+            </p>
+          </div>
+        ) : null}
+
+        {status === 'logged-out' ? (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
+                {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Continue with Google'}
+              </Button>
+
+              <div className="relative">
+                <span className="absolute inset-x-0 top-0 mx-auto -mt-3 w-fit bg-background px-2 text-xs uppercase text-muted-foreground">
+                  or with email
+                </span>
+                <div className="h-px bg-border" />
+              </div>
+
+              <form
+                className="space-y-4"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void handleLogin();
+                }}
+              >
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium" htmlFor="auth-email">
+                    Email
+                  </label>
+                  <input
+                    id="auth-email"
+                    type="email"
+                    className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                    placeholder="you@example.com"
+                    value={emailInput}
+                    onChange={(event) => {
+                      setEmailInput(event.target.value);
+                      if (feedback) {
+                        setFeedback(null);
+                      }
+                    }}
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium" htmlFor="auth-password">
+                    Password
+                  </label>
+                  <input
+                    id="auth-password"
+                    type="password"
+                    className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                    placeholder="Enter a secure password"
+                    value={passwordInput}
+                    onChange={(event) => {
+                      setPasswordInput(event.target.value);
+                      if (feedback) {
+                        setFeedback(null);
+                      }
+                    }}
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
+
+                <Button type="submit" disabled={isLoading} className="w-full">
+                  {isLoading && activeAction === 'sign-in' ? 'Signing in…' : 'Sign in'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={isLoading}
+                  className="w-full"
+                  onClick={() => {
+                    void handleRegister();
+                  }}
+                >
+                  {isLoading && activeAction === 'sign-up' ? 'Creating account…' : 'Create account'}
+                </Button>
+              </form>
+            </div>
+          </div>
+        ) : null}
       </CardContent>
 
-      <CardFooter className="flex-wrap gap-3 border-t border-border pt-6">
+      <CardFooter className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
         {status === 'logged-in' ? (
           <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? 'Signing out...' : 'Sign out'}
+            {isLoading ? 'Signing out…' : 'Sign out'}
           </Button>
         ) : (
-          <>
-            <Button
-              variant="outline"
-              onClick={handleGoogleSignIn}
-              disabled={isLoading || status === 'checking'}
-              className="w-full flex-1 sm:flex-none"
+          <p className="text-xs text-muted-foreground">
+            Having trouble?{' '}
+            <button
+              className="underline"
+              type="button"
+              onClick={() =>
+                setFeedback({
+                  tone: 'info',
+                  message: 'Contact support@better-auth.dev and we will help reset your access.',
+                })
+              }
             >
-              {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Sign in with Google'}
-            </Button>
-            <Button
-              onClick={handleLogin}
-              disabled={isLoading || status === 'checking'}
-              className="w-full flex-1 sm:flex-none"
-            >
-              {isLoading && activeAction === 'login' ? 'Signing in...' : 'Sign in'}
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={handleRegister}
-              disabled={isLoading || status === 'checking'}
-              className="w-full flex-1 sm:flex-none"
-            >
-              {isLoading && activeAction === 'register' ? 'Creating account...' : 'Create account'}
-            </Button>
-          </>
+              Contact support
+            </button>
+            .
+          </p>
         )}
       </CardFooter>
     </Card>
