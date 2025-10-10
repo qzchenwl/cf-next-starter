@@ -21,7 +21,6 @@ export function AuthStatusCard() {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
-  const [mode, setMode] = useState<'sign-in' | 'sign-up'>('sign-in');
 
   // Initial session state
   useEffect(() => {
@@ -130,7 +129,6 @@ export function AuthStatusCard() {
 
       await refreshSession(credentials.email);
       setPasswordInput('');
-      setMode('sign-in');
       setFeedback({ tone: 'success', message: 'Account created successfully. You can sign in right away.' });
     } catch (err) {
       setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
@@ -221,10 +219,6 @@ export function AuthStatusCard() {
     info: <Clock className="h-4 w-4" aria-hidden />,
   };
 
-  const submitLabel = mode === 'sign-in' ? 'Sign in' : 'Create account';
-  const submitLoadingLabel =
-    mode === 'sign-in' ? 'Signing in…' : activeAction === 'sign-up' ? 'Creating account…' : 'Working…';
-
   return (
     <Card className="h-full">
       <CardHeader className="space-y-4">
@@ -289,35 +283,6 @@ export function AuthStatusCard() {
 
         {status === 'logged-out' ? (
           <div className="space-y-6">
-            <div className="flex items-center gap-2 rounded-full border border-input bg-muted/40 p-1 text-xs font-medium">
-              {(
-                [
-                  { value: 'sign-in' as const, label: 'Sign in' },
-                  { value: 'sign-up' as const, label: 'Create account' },
-                ] as const
-              ).map((item) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  onClick={() => {
-                    setMode(item.value);
-                    setFeedback(null);
-                    if (item.value === 'sign-up') {
-                      setPasswordInput('');
-                    }
-                  }}
-                  className={cn(
-                    'flex-1 rounded-full px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                    mode === item.value
-                      ? 'bg-background text-foreground shadow'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-
             <div className="space-y-4">
               <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
                 {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Continue with Google'}
@@ -334,11 +299,7 @@ export function AuthStatusCard() {
                 className="space-y-4"
                 onSubmit={(event) => {
                   event.preventDefault();
-                  if (mode === 'sign-in') {
-                    void handleLogin();
-                  } else {
-                    void handleRegister();
-                  }
+                  void handleLogin();
                 }}
               >
                 <div className="space-y-1.5">
@@ -363,14 +324,9 @@ export function AuthStatusCard() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium" htmlFor="auth-password">
-                      Password
-                    </label>
-                    {mode === 'sign-up' ? (
-                      <span className="text-xs text-muted-foreground">Minimum 8 characters</span>
-                    ) : null}
-                  </div>
+                  <label className="text-sm font-medium" htmlFor="auth-password">
+                    Password
+                  </label>
                   <input
                     id="auth-password"
                     type="password"
@@ -383,21 +339,28 @@ export function AuthStatusCard() {
                         setFeedback(null);
                       }
                     }}
-                    autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
+                    autoComplete="current-password"
                     required
                   />
                 </div>
 
                 <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading && activeAction !== 'google' ? submitLoadingLabel : submitLabel}
+                  {isLoading && activeAction === 'sign-in' ? 'Signing in…' : 'Sign in'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={isLoading}
+                  className="w-full"
+                  onClick={() => {
+                    void handleRegister();
+                  }}
+                >
+                  {isLoading && activeAction === 'sign-up' ? 'Creating account…' : 'Create account'}
                 </Button>
               </form>
             </div>
-
-            <p className="text-xs text-muted-foreground">
-              We will only use your email for account access. You can delete your account at any time from your profile
-              settings.
-            </p>
           </div>
         ) : null}
       </CardContent>
