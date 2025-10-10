@@ -1,36 +1,14 @@
 'use client';
 
-import { useState, useEffect, type ReactNode, type SVGProps } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { Check, Clock, User, XCircle } from 'lucide-react';
 
 import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from '@/components/ui/card';
+import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
-
-function GoogleIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden focusable="false" {...props}>
-      <path
-        d="M23.49 12.27c0-.84-.07-1.45-.22-2.09H12v3.79h6.54c-.13.94-.84 2.35-2.42 3.3l-.02.12 3.51 2.72.24.02c2.19-2.02 3.64-5 3.64-9.86"
-        fill="#4285F4"
-      />
-      <path
-        d="M12 24c3.24 0 5.96-1.07 7.94-2.92l-3.78-2.92c-1.01.64-2.37 1.09-4.16 1.09-3.18 0-5.88-2.02-6.84-4.82l-.14.01-3.7 2.86-.05.13C2.32 21.78 6.83 24 12 24"
-        fill="#34A853"
-      />
-      <path
-        d="M5.16 14.43c-.25-.74-.4-1.53-.4-2.43s.15-1.7.39-2.43l-.01-.16-3.74-2.9-.12.06C.45 8.23 0 10.05 0 12c0 1.95.45 3.77 1.28 5.42"
-        fill="#FBBC05"
-      />
-      <path
-        d="M12 4.74c2.25 0 3.77.97 4.64 1.79l3.39-3.32C17.94 1.29 15.24 0 12 0 6.83 0 2.32 2.22 1.28 6.58l3.87 3.01C5.97 6.76 8.67 4.74 12 4.74"
-        fill="#EA4335"
-      />
-    </svg>
-  );
-}
 
 export function AuthStatusCard() {
   const [status, setStatus] = useState<'checking' | 'logged-in' | 'logged-out'>('checking');
@@ -410,7 +388,7 @@ export function AuthStatusCard() {
           <div className="space-y-6">
             <div className="space-y-4">
               <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
-                <GoogleIcon className="mr-2 h-4 w-4" />
+                <Icons.google className="mr-2 h-4 w-4" />
                 {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Continue with Google'}
               </Button>
 
@@ -482,7 +460,7 @@ export function AuthStatusCard() {
                     void handleSendOtp();
                   }}
                 >
-                  {isLoading && activeAction === 'otp-send' ? '发送中…' : '发送验证码'}
+                  {isLoading && activeAction === 'otp-send' ? 'Sending…' : 'Send code'}
                 </Button>
 
                 <Button
