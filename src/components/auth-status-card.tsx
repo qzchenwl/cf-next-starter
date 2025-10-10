@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
-import { Check, Clock, User, XCircle } from 'lucide-react';
+import { Check, Chrome, Clock, Loader2, Lock, LogIn, Mail, User, UserPlus, XCircle } from 'lucide-react';
 
 import { authClient } from '@/lib/auth-client'; // ← Better Auth 客户端
 import { Badge, type BadgeProps } from '@/components/ui/badge';
@@ -21,6 +21,7 @@ export function AuthStatusCard() {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
+  const [formMode, setFormMode] = useState<'sign-in' | 'sign-up'>('sign-in');
 
   // Initial session state
   useEffect(() => {
@@ -219,6 +220,24 @@ export function AuthStatusCard() {
     info: <Clock className="h-4 w-4" aria-hidden />,
   };
 
+  const isFormSubmitting = isLoading && (activeAction === 'sign-in' || activeAction === 'sign-up');
+  const isGoogleSubmitting = isLoading && activeAction === 'google';
+
+  useEffect(() => {
+    setFeedback(null);
+  }, [formMode]);
+
+  const passwordHint =
+    formMode === 'sign-up'
+      ? 'Use at least 8 characters, mixing letters, numbers, or symbols for a strong password.'
+      : 'Enter the password associated with your Better Auth account.';
+
+  const formTitle = formMode === 'sign-in' ? 'Sign in with email' : 'Create a new account';
+  const primaryButtonLabel = formMode === 'sign-in' ? 'Sign in' : 'Create account';
+
+  const primaryButtonIcon =
+    formMode === 'sign-in' ? <LogIn className="h-4 w-4" aria-hidden /> : <UserPlus className="h-4 w-4" aria-hidden />;
+
   return (
     <Card className="h-full">
       <CardHeader className="space-y-4">
@@ -284,79 +303,141 @@ export function AuthStatusCard() {
         {status === 'logged-out' ? (
           <div className="space-y-6">
             <div className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">Choose how you would like to continue.</p>
+                <div className="flex gap-2 rounded-lg border border-border/60 bg-muted/40 p-1">
+                  {(
+                    [
+                      { key: 'sign-in', label: 'Sign in', description: 'Access your existing workspace', icon: LogIn },
+                      {
+                        key: 'sign-up',
+                        label: 'Create account',
+                        description: 'Spin up a new project in minutes',
+                        icon: UserPlus,
+                      },
+                    ] as const
+                  ).map(({ key, label, description, icon: Icon }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setFormMode(key)}
+                      className={cn(
+                        'flex-1 rounded-md px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                        formMode === key
+                          ? 'bg-background shadow-sm ring-1 ring-primary/40'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
+                    >
+                      <span className="flex items-center gap-2 text-sm font-medium">
+                        <Icon className="h-4 w-4" aria-hidden />
+                        {label}
+                      </span>
+                      <span className="mt-1 block text-xs text-muted-foreground">{description}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
-                {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Continue with Google'}
+                {isGoogleSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Redirecting…
+                  </>
+                ) : (
+                  <>
+                    <Chrome className="mr-2 h-4 w-4" aria-hidden /> Continue with Google
+                  </>
+                )}
               </Button>
 
               <div className="relative">
-                <span className="absolute inset-x-0 top-0 mx-auto -mt-3 w-fit bg-background px-2 text-xs uppercase text-muted-foreground">
-                  or with email
+                <span className="absolute inset-x-0 top-0 mx-auto -mt-3 w-fit bg-background px-2 text-xs uppercase tracking-wide text-muted-foreground">
+                  or use your email
                 </span>
                 <div className="h-px bg-border" />
               </div>
 
               <form
+                aria-label={formTitle}
                 className="space-y-4"
                 onSubmit={(event) => {
                   event.preventDefault();
-                  void handleLogin();
+                  if (formMode === 'sign-in') {
+                    void handleLogin();
+                  } else {
+                    void handleRegister();
+                  }
                 }}
               >
                 <div className="space-y-1.5">
                   <label className="block text-sm font-medium" htmlFor="auth-email">
                     Email
                   </label>
-                  <input
-                    id="auth-email"
-                    type="email"
-                    className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
-                    placeholder="you@example.com"
-                    value={emailInput}
-                    onChange={(event) => {
-                      setEmailInput(event.target.value);
-                      if (feedback) {
-                        setFeedback(null);
-                      }
-                    }}
-                    autoComplete="email"
-                    required
-                  />
+                  <div className="relative">
+                    <Mail
+                      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <input
+                      id="auth-email"
+                      type="email"
+                      className="block w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
+                      placeholder="you@example.com"
+                      value={emailInput}
+                      onChange={(event) => {
+                        setEmailInput(event.target.value);
+                        if (feedback) {
+                          setFeedback(null);
+                        }
+                      }}
+                      autoComplete="email"
+                      required
+                      disabled={isFormSubmitting}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium" htmlFor="auth-password">
                     Password
                   </label>
-                  <input
-                    id="auth-password"
-                    type="password"
-                    className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
-                    placeholder="Enter a secure password"
-                    value={passwordInput}
-                    onChange={(event) => {
-                      setPasswordInput(event.target.value);
-                      if (feedback) {
-                        setFeedback(null);
-                      }
-                    }}
-                    autoComplete="current-password"
-                    required
-                  />
+                  <div className="relative">
+                    <Lock
+                      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <input
+                      id="auth-password"
+                      type="password"
+                      className="block w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
+                      placeholder={formMode === 'sign-in' ? 'Enter your password' : 'Create a secure password'}
+                      value={passwordInput}
+                      onChange={(event) => {
+                        setPasswordInput(event.target.value);
+                        if (feedback) {
+                          setFeedback(null);
+                        }
+                      }}
+                      autoComplete={formMode === 'sign-in' ? 'current-password' : 'new-password'}
+                      required
+                      disabled={isFormSubmitting}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">{passwordHint}</p>
                 </div>
 
                 <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading && activeAction === 'sign-in' ? 'Signing in…' : 'Sign in'}
-                </Button>
-
-                <Button
-                  type="button"
-                  disabled={isLoading}
-                  className="w-full"
-                  onClick={() => {
-                    void handleRegister();
-                  }}
-                >
-                  {isLoading && activeAction === 'sign-up' ? 'Creating account…' : 'Create account'}
+                  {isFormSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                      {formMode === 'sign-in' ? 'Signing in…' : 'Creating account…'}
+                    </>
+                  ) : (
+                    <>
+                      {primaryButtonIcon}
+                      <span className="ml-2">{primaryButtonLabel}</span>
+                    </>
+                  )}
                 </Button>
               </form>
             </div>
@@ -367,7 +448,15 @@ export function AuthStatusCard() {
       <CardFooter className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
         {status === 'logged-in' && (
           <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? 'Signing out…' : 'Sign out'}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Signing out…
+              </>
+            ) : (
+              <>
+                <LogIn className="mr-2 h-4 w-4 rotate-180" aria-hidden /> Sign out
+              </>
+            )}
           </Button>
         )}
       </CardFooter>
