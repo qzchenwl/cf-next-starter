@@ -366,27 +366,10 @@ export function AuthStatusCard() {
       </CardContent>
 
       <CardFooter className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
-        {status === 'logged-in' ? (
+        {status === 'logged-in' && (
           <Button onClick={handleLogout} disabled={isLoading} className="w-full sm:w-auto">
             {isLoading ? 'Signing out…' : 'Sign out'}
           </Button>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            Having trouble?{' '}
-            <button
-              className="underline"
-              type="button"
-              onClick={() =>
-                setFeedback({
-                  tone: 'info',
-                  message: 'Contact support@better-auth.dev and we will help reset your access.',
-                })
-              }
-            >
-              Contact support
-            </button>
-            .
-          </p>
         )}
       </CardFooter>
     </Card>
