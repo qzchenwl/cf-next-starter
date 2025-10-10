@@ -350,7 +350,6 @@ export function AuthStatusCard() {
 
                 <Button
                   type="button"
-                  variant="ghost"
                   disabled={isLoading}
                   className="w-full"
                   onClick={() => {
