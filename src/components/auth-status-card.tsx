@@ -23,7 +23,7 @@ export function AuthStatusCard() {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [otpInput, setOtpInput] = useState('');
-  const [otpRequested, setOtpRequested] = useState(false);
+  const [authMode, setAuthMode] = useState<'credentials' | 'otp'>('credentials');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
 
   // Initial session state
@@ -36,7 +36,7 @@ export function AuthStatusCard() {
         setEmailInput(session.user.email ?? '');
         setPasswordInput('');
         setOtpInput('');
-        setOtpRequested(false);
+        setAuthMode('credentials');
         setIsEmailVerified(Boolean(session.user.emailVerified));
         setStatus('logged-in');
       } else {
@@ -44,7 +44,7 @@ export function AuthStatusCard() {
         setEmailInput('');
         setPasswordInput('');
         setOtpInput('');
-        setOtpRequested(false);
+        setAuthMode('credentials');
         setIsEmailVerified(null);
         setStatus('logged-out');
       }
@@ -98,7 +98,7 @@ export function AuthStatusCard() {
     setUserEmail(nextEmail);
     setEmailInput(nextEmail ?? fallbackEmail ?? '');
     setIsEmailVerified(session?.user ? Boolean(session.user.emailVerified) : null);
-    setOtpRequested(false);
+    setAuthMode('credentials');
     setOtpInput('');
     setStatus(session?.user ? 'logged-in' : 'logged-out');
   };
@@ -193,7 +193,7 @@ export function AuthStatusCard() {
     setEmailInput('');
     setPasswordInput('');
     setOtpInput('');
-    setOtpRequested(false);
+    setAuthMode('credentials');
     setStatus('logged-out');
     setIsEmailVerified(null);
     setFeedback(null);
@@ -219,10 +219,11 @@ export function AuthStatusCard() {
         return;
       }
 
-      setOtpRequested(true);
+      setAuthMode('otp');
+      setOtpInput('');
       setFeedback({
         tone: 'success',
-        message: 'We emailed you a one-time code. Enter it below within five minutes.',
+        message: 'We emailed you a one-time code. Enter it below to finish signing in.',
       });
     } catch (err) {
       setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
@@ -262,7 +263,7 @@ export function AuthStatusCard() {
       await refreshSession(email);
       setPasswordInput('');
       setOtpInput('');
-      setOtpRequested(false);
+      setAuthMode('credentials');
       setFeedback({ tone: 'success', message: 'Signed in with your one-time code.' });
     } catch (err) {
       setFeedback({ tone: 'error', message: err instanceof Error ? err.message : 'Unknown error' });
@@ -382,7 +383,7 @@ export function AuthStatusCard() {
           </div>
         ) : null}
 
-        {status === 'logged-out' ? (
+        {status === 'logged-out' && authMode === 'credentials' ? (
           <div className="space-y-6">
             <div className="space-y-4">
               <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
@@ -451,6 +452,18 @@ export function AuthStatusCard() {
 
                 <Button
                   type="button"
+                  variant="secondary"
+                  disabled={isLoading}
+                  className="w-full"
+                  onClick={() => {
+                    void handleSendOtp();
+                  }}
+                >
+                  {isLoading && activeAction === 'otp-send' ? 'Sending code…' : 'Use a one-time code'}
+                </Button>
+
+                <Button
+                  type="button"
                   disabled={isLoading}
                   className="w-full"
                   onClick={() => {
@@ -460,64 +473,49 @@ export function AuthStatusCard() {
                   {isLoading && activeAction === 'sign-up' ? 'Creating account…' : 'Create account'}
                 </Button>
               </form>
-
-              <div className="space-y-3 rounded-md border border-dashed border-muted-foreground/40 p-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-foreground">One-time code login</p>
-                  <p className="text-xs text-muted-foreground">
-                    Prefer passwordless? We can email you a single-use code that expires in five minutes.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      void handleSendOtp();
-                    }}
-                    disabled={isLoading}
-                    className="sm:w-fit"
-                  >
-                    {isLoading && activeAction === 'otp-send' ? 'Sending code…' : 'Email me a login code'}
-                  </Button>
-                </div>
-
-                <form
-                  className="space-y-3"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    void handleOtpSignIn();
-                  }}
-                >
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium" htmlFor="auth-otp">
-                      One-time code
-                    </label>
-                    <input
-                      id="auth-otp"
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
-                      placeholder={otpRequested ? 'Enter the 6-digit code' : 'Request a code to fill this in'}
-                      value={otpInput}
-                      onChange={(event) => {
-                        setOtpInput(event.target.value);
-                        if (feedback?.tone === 'error') {
-                          setFeedback(null);
-                        }
-                      }}
-                      autoComplete="one-time-code"
-                    />
-                  </div>
-
-                  <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-                    {isLoading && activeAction === 'otp-verify' ? 'Verifying code…' : 'Sign in with code'}
-                  </Button>
-                </form>
-              </div>
             </div>
+          </div>
+        ) : null}
+
+        {status === 'logged-out' && authMode === 'otp' ? (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Enter the one-time code we emailed to <span className="font-medium text-foreground">{emailInput}</span>.
+            </p>
+
+            <form
+              className="space-y-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void handleOtpSignIn();
+              }}
+            >
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="auth-otp">
+                  One-time code
+                </label>
+                <input
+                  id="auth-otp"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  placeholder="Enter the 6-digit code"
+                  value={otpInput}
+                  onChange={(event) => {
+                    setOtpInput(event.target.value);
+                    if (feedback?.tone === 'error') {
+                      setFeedback(null);
+                    }
+                  }}
+                  autoComplete="one-time-code"
+                />
+              </div>
+
+              <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading && activeAction === 'otp-verify' ? 'Signing in…' : 'Sign in'}
+              </Button>
+            </form>
           </div>
         ) : null}
       </CardContent>
