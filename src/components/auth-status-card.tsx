@@ -329,12 +329,7 @@ export function AuthStatusCard() {
             </Tabs>
             <div className="space-y-2 text-center text-xs text-muted-foreground">
               <p>Use a Google account instead:</p>
-              <Button
-                variant="outline"
-                onClick={handleGoogleSignIn}
-                disabled={isLoading || status === 'checking'}
-                className="w-full"
-              >
+              <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading} className="w-full">
                 {isLoading && activeAction === 'google' ? 'Redirecting…' : 'Continue with Google'}
               </Button>
             </div>
