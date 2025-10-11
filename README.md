@@ -74,6 +74,28 @@ Follow this path to fork the project, wire it into your Cloudflare account, and 
 
    Configure Better Auth by setting the `BETTER_AUTH_TRUSTED_ORIGINS` variable in `wrangler.jsonc` (or the Cloudflare dashboard) to a comma-separated list of allowed domains. The Worker falls back to `http://localhost:8787` and `*.workers.dev` when the variable is omitted, which keeps local development frictionless while still letting you tighten origins per environment.
 
+### Observability: ship traces to self-hosted SigNoz
+
+The Worker ships with OpenTelemetry instrumentation via [`@microlabs/otel-cf-workers`](https://www.npmjs.com/package/@microlabs/otel-cf-workers). To forward traces to a self-hosted SigNoz collector:
+
+1. Ensure the collector exposes an OTLP/HTTP endpoint (the default `docker-compose` bundle listens on `http://localhost:4318/v1/traces`).
+2. Set the endpoint and service name in `wrangler.jsonc` (or via the Cloudflare dashboard) using the provided defaults:
+
+   ```json
+   {
+     "vars": {
+       "SIGNOZ_EXPORTER_URL": "http://localhost:4318/v1/traces",
+       "SIGNOZ_SERVICE_NAME": "cf-next-starter"
+     }
+   }
+   ```
+
+   Provide `SIGNOZ_EXPORTER_HEADERS` as a JSON string (for example `{ "Authorization": "Basic ..." }`) when your collector requires authentication.
+
+3. Deploy the Worker with `npm run deploy` once the collector is reachable. Trace data appears inside the **Traces** tab of the SigNoz UI.
+
+The instrumentation coexists with the Sentry integration already bundled in `custom-worker.ts`, so error and trace collection stay in sync.
+
 ## Automated Quality Gates
 
 GitHub Actions (`.github/workflows/test.yml`) guard every push and pull request:

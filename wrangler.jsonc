@@ -48,7 +48,9 @@
     "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
     "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter",
     "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com",
-    "SENTRY_DSN": "https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368"
+    "SENTRY_DSN": "https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368",
+    "SIGNOZ_EXPORTER_URL": "http://localhost:4318/v1/traces",
+    "SIGNOZ_SERVICE_NAME": "cf-next-starter"
   },
   "env": {
     "preview": {
@@ -80,7 +82,9 @@
         "DEFAULT_EMAIL_FROM_ADDRESS": "noreply@cwllll.com",
         "DEFAULT_EMAIL_FROM_NAME": "Cloudflare Next Starter",
         "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:8787,*.workers.dev,*.cwllll.com",
-        "SENTRY_DSN": "https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368"
+        "SENTRY_DSN": "https://6050c1828d925b3aed83e86f7b2d52d7@o4509060729470976.ingest.us.sentry.io/4510147471802368",
+        "SIGNOZ_EXPORTER_URL": "http://localhost:4318/v1/traces",
+        "SIGNOZ_SERVICE_NAME": "cf-next-starter"
       }
     }
   }
